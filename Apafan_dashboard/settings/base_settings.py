@@ -27,7 +27,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
+AUTH_USER_MODEL = 'user.User'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'user',
     'web_socket',
     # installed app
+    'rest_framework',
+
 
 ]
 
