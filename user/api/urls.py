@@ -16,10 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from user.api.views import RegisterUserSerializers
+from user.api.views import UserModelViewSet
 
 router = routers.DefaultRouter()
-router.register("", RegisterUserSerializers, basename='register_user')
+router.register("", UserModelViewSet, basename='register_user')
 
 urlpatterns = [
 
