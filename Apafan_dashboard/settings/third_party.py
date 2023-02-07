@@ -9,3 +9,17 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
+        }
+    },
+    "LOGIN_URL":  "/api/auth/login/",
+    "LOGOUT_URL": "/api/auth/logout/",
+}
+
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': False,
+}
