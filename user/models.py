@@ -11,4 +11,4 @@ class User(AbstractUser):
     expire_time = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['username', 'password']
+    REQUIRED_FIELDS = ['password']
