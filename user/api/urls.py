@@ -16,10 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from user.api.views import UserModelViewSet
+from user.api.views import UserCreateListUpdateViewSet, ChangeUserPasswordViewSet, SelfUserViewSet
 
 router = routers.DefaultRouter()
-router.register("", UserModelViewSet, basename='register_user')
+router.register("user", UserCreateListUpdateViewSet, basename='user_list_create_update')
+router.register("change_password", ChangeUserPasswordViewSet, basename='change_password')
+router.register("self", SelfUserViewSet, basename='get_self_user')
+
 
 urlpatterns = [
 
