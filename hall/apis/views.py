@@ -17,7 +17,7 @@ from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
 
 from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionSerializer, GroupSerializer, \
     DeviceSerializer, HeadSerializer
-from hall.filters import ListObjectPermissionFilterBackend
+from hall.filters import *
 from hall.permissions import IsSuperUser, CustomObjectPermission
 from hall.models import Company, Hall, Production, Group, Device, Head
 
@@ -27,10 +27,12 @@ class CompanyViewSet(ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
 
-    @action(methods=["GET"], detail=True, permission_classes=[CustomDjangoObjectPermissions])
+    @action(methods=["GET"], detail=True, permission_classes=[CustomDjangoObjectPermissions], )
     def list_halls(self, request, pk):
         hall_set = get_object_or_404(Company, id=pk).hall_set.all()
-        available = get_objects_for_user(request.user, 'hall.view_hall') if not request.user.is_admin else hall_set
+        available = get_objects_for_user(request.user,
+                                         'hall.view_hall') if not request.user.is_admin else hall_set.filter(
+            company_id=request.user.company.id)
         queryset = available & hall_set
         data = [HallSerializer(model).data for model in queryset]
         return Response(data=data, status=status.HTTP_200_OK)
@@ -39,7 +41,7 @@ class CompanyViewSet(ModelViewSet):
 class HallViewSet(ModelViewSet):
     authentication_classes = [CustomAuthentication]
     permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [ListObjectPermissionFilterBackend, SearchFilter]
+    filter_backends = [HallListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
     queryset = Hall.objects.all()
     serializer_class = HallSerializer
@@ -62,7 +64,7 @@ class HallViewSet(ModelViewSet):
 
 class ProductionView(ModelViewSet):
     permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [ListObjectPermissionFilterBackend, SearchFilter]
+    filter_backends = [ProductionListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
     queryset = Production.objects.all()
     serializer_class = ProductionSerializer
@@ -76,7 +78,7 @@ class ProductionView(ModelViewSet):
 
 class GroupViewSet(ModelViewSet):
     permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [ListObjectPermissionFilterBackend, SearchFilter]
+    filter_backends = [GroupListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -90,7 +92,7 @@ class GroupViewSet(ModelViewSet):
 
 class DeviceViewSet(ModelViewSet):
     permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [ListObjectPermissionFilterBackend, SearchFilter]
+    filter_backends = [DeviceListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name', 'code']
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
@@ -104,7 +106,7 @@ class DeviceViewSet(ModelViewSet):
 
 class HeadViewSet(ModelViewSet):
     permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [ListObjectPermissionFilterBackend, SearchFilter]
+    filter_backends = [HeadListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name', 'chip_id']
     queryset = Head.objects.all()
     serializer_class = HeadSerializer

@@ -11,7 +11,7 @@ from user.models import User
 class RegisterUserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ["username", 'password', 'is_admin', 'expire_time', 'first_name', 'last_name']
+        fields = ["username", 'password', 'expire_time', 'first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True},
                         'first_name': {'required': True},
                         'last_name': {'required': True},
@@ -26,11 +26,7 @@ class RegisterUserSerializers(ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create(
-            username=validated_data['username'],
-            expire_time=validated_data['expire_time'],
-            is_admin=validated_data['is_admin'],
-        )
+        user = User.objects.create(**validated_data)
         user.set_password(validated_data['password'])
         user.save()
         return user
@@ -39,20 +35,40 @@ class RegisterUserSerializers(ModelSerializer):
 class ListUserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'expire_time', 'created_at', 'first_name', 'last_name']
+        fields = ['id', 'username', 'email', 'expire_time', 'created_at', 'first_name', 'last_name']
 
 
 class RetrieveUserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'expire_time', 'created_at', 'is_admin', 'is_superuser', 'last_login',
+        fields = ['username', 'email', 'expire_time', 'created_at', 'last_login',
                   'first_name', 'last_name']
+
+
+class AdminUserSerializers(ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        exclude = ['password']
+
+    def validate(self, attrs):
+        if 'password' not in attrs.keys() or not attrs['password']:
+            raise ValidationError("you must enter a password")
+
+        if validate_password(attrs['password']):
+            raise ValidationError('weak password try other one')
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class UpdateUserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['email', 'expire_time', 'is_admin', 'first_name', 'last_name']
+        fields = ['email', 'expire_time', 'first_name', 'last_name']
 
 
 class ChangePasswordSerializers(Serializer):

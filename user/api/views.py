@@ -9,7 +9,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
 
 from user.api.serializers import RegisterUserSerializers, ListUserSerializers, UpdateUserSerializers, \
-    RetrieveUserSerializers, ChangePasswordSerializers, SelfUserSerializers, SelfUserUpdateSerializers
+    RetrieveUserSerializers, ChangePasswordSerializers, SelfUserSerializers, SelfUserUpdateSerializers, \
+    AdminUserSerializers
 from user.permissions import IsAdmin, IsSelf
 
 
@@ -21,14 +22,17 @@ class UserCreateListUpdateViewSet(ModelViewSet):
         return get_user_model().objects.all().exclude(id=self.request.user.id)
 
     def get_serializer_class(self):
-        if self.action == 'create':
-            return RegisterUserSerializers
-        elif self.action == "list":
-            return ListUserSerializers
-        elif self.action == 'retrieve':
-            return RetrieveUserSerializers
+        if self.request.user.is_superuser:
+            return AdminUserSerializers
         else:
-            return UpdateUserSerializers
+            if self.action == 'list':
+                return ListUserSerializers
+            elif self.action == 'create':
+                return RegisterUserSerializers
+            elif self.action == 'retrieve':
+                return RetrieveUserSerializers
+            else:
+                return UpdateUserSerializers
 
     def get_object(self):
         username = self.kwargs['username']
