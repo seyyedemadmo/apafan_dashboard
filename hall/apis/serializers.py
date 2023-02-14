@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from django.contrib.gis.geos import GEOSGeometry
 
-from hall.models import Company, Hall, Production, Group, Device, Head
+from hall.models import Company, Hall, Production, Squad, Device, Head
 
 
 class CompanySerializer(ModelSerializer):
@@ -38,7 +38,7 @@ class ProductionSerializer(ModelSerializer):
 
 class GroupSerializer(ModelSerializer):
     class Meta:
-        model = Group
+        model = Squad
         fields = '__all__'
 
     def validate(self, attrs):

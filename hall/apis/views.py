@@ -19,7 +19,7 @@ from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionS
     DeviceSerializer, HeadSerializer
 from hall.filters import *
 from hall.permissions import IsSuperUser, CustomObjectPermission
-from hall.models import Company, Hall, Production, Group, Device, Head
+from hall.models import Company, Hall, Production, Squad, Device, Head
 
 
 class CompanyViewSet(ModelViewSet):
@@ -80,13 +80,13 @@ class GroupViewSet(ModelViewSet):
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [GroupListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
-    queryset = Group.objects.all()
+    queryset = Squad.objects.all()
     serializer_class = GroupSerializer
 
     def create(self, request, *args, **kwargs):
         res = super(GroupViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_group', request.user, get_object_or_404(Group, id=res.data['id']))
-        assign_perm('hall.change_group', request.user, get_object_or_404(Group, id=res.data['id']))
+        assign_perm('hall.view_group', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.change_group', request.user, get_object_or_404(Squad, id=res.data['id']))
         return res
 
 
@@ -99,8 +99,8 @@ class DeviceViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         res = super(DeviceViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_group', request.user, get_object_or_404(Group, id=res.data['id']))
-        assign_perm('hall.change_group', request.user, get_object_or_404(Group, id=res.data['id']))
+        assign_perm('hall.view_group', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.change_group', request.user, get_object_or_404(Squad, id=res.data['id']))
         return res
 
 
@@ -113,6 +113,6 @@ class HeadViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         res = super(HeadViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_group', request.user, get_object_or_404(Group, id=res.data['id']))
-        assign_perm('hall.change_group', request.user, get_object_or_404(Group, id=res.data['id']))
+        assign_perm('hall.view_group', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.change_group', request.user, get_object_or_404(Squad, id=res.data['id']))
         return res

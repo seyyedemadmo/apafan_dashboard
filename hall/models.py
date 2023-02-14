@@ -29,7 +29,7 @@ class Production(g_models.Model):
     hall = models.ForeignKey(Hall, on_delete=models.CASCADE, null=False, blank=False)
 
 
-class Group(g_models.Model):
+class Squad(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=500)
     capacity = models.IntegerField(null=True, blank=True)
     geom = g_models.PolygonField(blank=False, null=False, srid=4326)
@@ -48,7 +48,7 @@ class Device(g_models.Model):
     geom = g_models.PointField(null=False, blank=False, srid=4326)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True)
+    group = models.ForeignKey(Squad, on_delete=models.SET_NULL, null=True, blank=True)
     is_connected = models.BooleanField(default=False)
     last_connected = models.DateTimeField(null=True, blank=True)
     device_type = models.CharField(choices=Device_type.choices, default=Device_type.ONE_MOTOR, max_length=255,)

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'setting',
     'user',
     'web_socket',
+    'permissions',
     # installed app
     'rest_framework',
     'drf_yasg',
@@ -174,3 +175,5 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # this is default
     'guardian.backends.ObjectPermissionBackend',
 )
+
+ADMIN_USER_PERMISSIONS = ["hall", 'production', 'device', 'squad', 'head',]

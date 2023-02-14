@@ -1,3 +1,14 @@
-from django.db import models
+from django.contrib.auth.models import Permission
 
-# Create your models here.
+from permissions.helpers.translate import translate_permission
+
+
+class PermissionProxy(Permission):
+
+    @property
+    def translate(self):
+        return translate_permission(self.name)
+
+    class Meta:
+        proxy = True
+        default_permissions = ()
