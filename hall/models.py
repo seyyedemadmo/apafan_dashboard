@@ -6,7 +6,6 @@ from django.contrib.gis.db import models as g_models
 class Company(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=255, help_text='company name')
     p_name = models.CharField(null=False, blank=False, max_length=255,help_text='persian company name')
-    admin_user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, null=False, blank=False)
     location = g_models.PolygonField(srid=4326, null=False, blank=False)
     expire_service_time = models.DateTimeField(null=True, blank=True)
     address = models.CharField(null=True, blank=True, max_length=1000)
