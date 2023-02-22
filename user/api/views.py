@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 
 from user.api.serializers import RegisterUserSerializers, ListUserSerializers, UpdateUserSerializers, \
     RetrieveUserSerializers, ChangePasswordSerializers, SelfUserSerializers, SelfUserUpdateSerializers, \
-    AdminUserSerializers
+    AdminUserSerializers, AdminCreateUserSerializers
 from user.permissions import IsAdmin, IsSelf
 
 
@@ -23,7 +23,10 @@ class UserCreateListUpdateViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
-            return AdminUserSerializers
+            if self.action == "create":
+                return AdminCreateUserSerializers
+            else:
+                return AdminUserSerializers
         else:
             if self.action == 'list':
                 return ListUserSerializers

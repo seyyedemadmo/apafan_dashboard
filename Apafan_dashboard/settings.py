@@ -137,9 +137,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'Apafan_dashboard.rendrer.CustomJSONRenderer',
@@ -176,4 +173,14 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
-ADMIN_USER_PERMISSIONS = ["hall", 'production', 'device', 'squad', 'head',]
+ADMIN_USER_PERMISSIONS = ["hall", 'production', 'device', 'squad', 'head']
+
+BASE_MQTT_SUBSCRIBE_TOPIC = 'AtiBinCo/Apafan/data/company/#'
+
+BASE_MQTT_PUBLISH_TOPIC = 'AtiBinCo/Apafan/config/company/'
+
+BASE_LOG_TOPIC = "AtiBinCo/Apafan/log/"
+
+MQTT_ADDRESS = 'localhost'
+
+MQTT_PORT = 1883

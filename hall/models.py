@@ -5,7 +5,7 @@ from django.contrib.gis.db import models as g_models
 
 class Company(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=255, help_text='company name')
-    p_name = models.CharField(null=False, blank=False, max_length=255,help_text='persian company name')
+    p_name = models.CharField(null=False, blank=False, max_length=255, help_text='persian company name')
     location = g_models.PolygonField(srid=4326, null=False, blank=False)
     expire_service_time = models.DateTimeField(null=True, blank=True)
     address = models.CharField(null=True, blank=True, max_length=1000)
@@ -51,13 +51,14 @@ class Device(g_models.Model):
     group = models.ForeignKey(Squad, on_delete=models.SET_NULL, null=True, blank=True)
     is_connected = models.BooleanField(default=False)
     last_connected = models.DateTimeField(null=True, blank=True)
-    device_type = models.CharField(choices=Device_type.choices, default=Device_type.ONE_MOTOR, max_length=255,)
+    device_type = models.CharField(choices=Device_type.choices, default=Device_type.ONE_MOTOR, max_length=255, )
 
 
 class Head(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=255)
-    chip_ip = models.CharField(null=False, blank=False, max_length=255)
+    chip_ip = models.CharField(null=False, blank=False, unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_connected = models.BooleanField(default=False)
     last_connected = models.DateTimeField(null=True, blank=True)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT)
