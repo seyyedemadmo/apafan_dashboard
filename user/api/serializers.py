@@ -45,6 +45,30 @@ class RetrieveUserSerializers(ModelSerializer):
                   'first_name', 'last_name']
 
 
+class AdminCreateUserSerializers(ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ["username", 'password', 'expire_time', 'first_name', 'last_name', 'is_admin', 'company']
+        extra_kwargs = {'password': {'write_only': True},
+                        'first_name': {'required': True},
+                        'last_name': {'required': True},
+                        }
+
+    def validate(self, attrs):
+        if 'password' not in attrs.keys() or not attrs['password']:
+            raise ValidationError("you must enter a password")
+
+        if validate_password(attrs['password']):
+            raise ValidationError('weak password try other one')
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+
 class AdminUserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
