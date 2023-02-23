@@ -85,8 +85,8 @@ class GroupViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         res = super(GroupViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_group', request.user, get_object_or_404(Squad, id=res.data['id']))
-        assign_perm('hall.change_group', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.view_squad', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.change_squad', request.user, get_object_or_404(Squad, id=res.data['id']))
         return res
 
 
@@ -99,8 +99,8 @@ class DeviceViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         res = super(DeviceViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_group', request.user, get_object_or_404(Squad, id=res.data['id']))
-        assign_perm('hall.change_group', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.view_device', request.user, get_object_or_404(Device, id=res.data['id']))
+        assign_perm('hall.change_device', request.user, get_object_or_404(Device, id=res.data['id']))
         return res
 
 
@@ -113,6 +113,6 @@ class HeadViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         res = super(HeadViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_group', request.user, get_object_or_404(Squad, id=res.data['id']))
-        assign_perm('hall.change_group', request.user, get_object_or_404(Squad, id=res.data['id']))
+        assign_perm('hall.view_head', request.user, get_object_or_404(Head, id=res.data['id']))
+        assign_perm('hall.change_head', request.user, get_object_or_404(Head, id=res.data['id']))
         return res

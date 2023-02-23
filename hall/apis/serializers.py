@@ -64,3 +64,10 @@ class HeadSerializer(ModelSerializer):
     class Meta:
         model = Head
         exclude = ['created_at', 'updated_at', 'is_connected', 'last_connected']
+
+
+class WebSocketHeadSerializer(ModelSerializer):
+    class Meta:
+        model = Head
+        exclude = ['created_at', 'updated_at', ]
+        depth = 1
