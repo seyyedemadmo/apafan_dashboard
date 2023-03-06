@@ -24,6 +24,6 @@ router.register("change_password", ChangeUserPasswordViewSet, basename='change_p
 # router.register("self", SelfUserViewSet, basename='get_self_user')
 
 urlpatterns = [
-                  path('self/retrieve', SelfUserViewSet.as_view({'get': 'retrieve'}), ),
-                  path('self/update', SelfUserViewSet.as_view({'put': 'update', "patch": "update"}))
+                  path('self/retrieve/', SelfUserViewSet.as_view({'get': 'retrieve'}), ),
+                  path('self/update/', SelfUserViewSet.as_view({'put': 'update', "patch": "update"}))
               ] + router.urls
