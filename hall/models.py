@@ -45,6 +45,7 @@ class Device(g_models.Model):
 
     name = models.CharField(null=False, blank=False, max_length=255)
     code = models.CharField(null=False, blank=False, max_length=255)
+    chip_ip = models.CharField(null=False, blank=False, unique=True, max_length=255)
     geom = g_models.PointField(null=False, blank=False, srid=4326)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,7 +57,6 @@ class Device(g_models.Model):
 
 class Head(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=255)
-    chip_ip = models.CharField(null=False, blank=False, unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_connected = models.BooleanField(default=False)
