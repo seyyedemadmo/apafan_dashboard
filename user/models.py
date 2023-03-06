@@ -13,7 +13,7 @@ class User(AbstractUser):
     company = models.ForeignKey(Company, on_delete=models.PROTECT, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expire_time = models.DateTimeField(null=True, blank=True)
-    uuid = models.UUIDField(unique=True, null=True, blank=True)
+    uuid = models.CharField(unique=True, null=True, blank=True, max_length=50)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['password']
@@ -21,5 +21,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.company:
             self.is_admin = True
-        self.uuid = uuid.uuid4().__str__()
+        if not self.uuid:
+            self.uuid = uuid.uuid4().__str__()
         super(User, self).save(*args, **kwargs)

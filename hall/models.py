@@ -45,6 +45,7 @@ class Device(g_models.Model):
 
     name = models.CharField(null=False, blank=False, max_length=255)
     code = models.CharField(null=False, blank=False, max_length=255)
+    chip_ip = models.CharField(null=True, blank=True, max_length=255)
     geom = g_models.PointField(null=False, blank=False, srid=4326)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -53,10 +54,16 @@ class Device(g_models.Model):
     last_connected = models.DateTimeField(null=True, blank=True)
     device_type = models.CharField(choices=Device_type.choices, default=Device_type.ONE_MOTOR, max_length=255, )
 
+    def save(
+            self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        if Device.objects.filter(chip_ip=self.chip_ip).exist():
+            raise ValueError("cant add two device with one chip id")
+        super(Device, self).save(force_insert, force_update, using, update_fields)
+
 
 class Head(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=255)
-    chip_ip = models.CharField(null=False, blank=False, unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_connected = models.BooleanField(default=False)
