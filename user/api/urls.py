@@ -21,9 +21,9 @@ from user.api.views import UserCreateListUpdateViewSet, ChangeUserPasswordViewSe
 router = routers.DefaultRouter()
 router.register("user", UserCreateListUpdateViewSet, basename='user_list_create_update')
 router.register("change_password", ChangeUserPasswordViewSet, basename='change_password')
-router.register("self", SelfUserViewSet, basename='get_self_user')
-
+# router.register("self", SelfUserViewSet, basename='get_self_user')
 
 urlpatterns = [
-
+                  path('self/retrieve', SelfUserViewSet.as_view({'get': 'retrieve'}), ),
+                  path('self/update', SelfUserViewSet.as_view({'put': 'update', "patch": "update"}))
               ] + router.urls
