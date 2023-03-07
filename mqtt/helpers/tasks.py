@@ -10,11 +10,11 @@ from device.models import HeadData
 from hall.models import Head, Company
 
 
-def on_connect(client, userdata, flags, rc, prob=None):
+def default_on_connect(client, userdata, flags, rc, prob=None):
     print("device connected")
 
 
-def on_massage(client, userdata, msg):
+def default_on_massage(client, userdata, msg):
     with open("error.log", 'w') as f:
         try:
             print("message arrived", file=f)
@@ -42,7 +42,7 @@ def on_massage(client, userdata, msg):
             pass
 
 
-def on_disconnect(rc, a, b, c):
+def default_on_disconnect(rc, a, b, c):
     cli = Client()
     cli.connect('localhost', 1883)
     cli.publish('test', 'im done :)')
@@ -50,13 +50,15 @@ def on_disconnect(rc, a, b, c):
 
 
 class Mqtt:
-    def __init__(self, address, port, username=None, password=None, protocol=5):
+    def __init__(self, address, port, username=None, password=None, protocol=5, on_connect=None, on_massage=None,
+                 on_disconnect=None):
         self.address = address
         self.port = port
         self.username = username
         self.password = password
-        self.connect_function = on_connect if on_connect else on_connect
-        self.massage_function = on_massage if on_massage else on_massage
+        self.connect_function = on_connect if on_connect else default_on_connect
+        self.massage_function = on_massage if on_massage else default_on_massage
+        self.disconnect_function = on_disconnect if on_disconnect else default_on_disconnect
         self.client = Client(protocol=protocol)
         self.connect()
 
@@ -66,7 +68,7 @@ class Mqtt:
             return True
         return False
 
-    def send(self, massage, topic):
+    def send(self, topic, massage):
         return self.client.publish(topic, massage, qos=2)
 
     def listen(self, topic):
@@ -75,7 +77,7 @@ class Mqtt:
     def run(self):
         self.client.on_connect = self.connect_function
         self.client.on_message = self.massage_function
-        self.client.on_disconnect = on_disconnect
+        self.client.on_disconnect = self.disconnect_function
         self.client.loop_start()
 
     def stop(self):

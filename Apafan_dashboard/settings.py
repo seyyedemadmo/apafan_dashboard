@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'user',
     'web_socket',
     'permissions',
+    'parameter',
     # installed app
     'rest_framework',
     'drf_yasg',
@@ -196,3 +197,7 @@ BASE_LOG_TOPIC = "AtiBinCo/Apafan/log/"
 MQTT_ADDRESS = 'localhost'
 
 MQTT_PORT = 1883
+
+MQTT_TEMP_TOPIC = "AtiBinCo/Apafan/device/temp/#"
+
+MQT_BASE_SEND_TOPIC = "AtiBinCo/Apafan/device/send"

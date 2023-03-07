@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin
 from rest_framework.exceptions import ValidationError
+from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -16,6 +18,8 @@ from user.permissions import IsAdmin, IsSelf
 
 class UserCreateListUpdateViewSet(ModelViewSet):
     permission_classes = [IsAdmin]
+    filter_backends = [SearchFilter]
+    search_fields = ['username', 'first_name', 'last_name', 'uuid']
     lookup_field = "username"
 
     def get_queryset(self):
@@ -68,12 +72,11 @@ class ChangeUserPasswordViewSet(UpdateModelMixin, GenericViewSet):
 
 
 class SelfUserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
-    permission_classes = [IsSelf]
+    permission_classes = [IsAuthenticated]
     queryset = get_user_model().objects.all()
-    lookup_field = 'username'
 
     def get_object(self):
-        return get_object_or_404(get_user_model(), username=self.request.user.username)
+        return self.request.user
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

@@ -23,3 +23,9 @@ class User(AbstractUser):
             self.is_admin = True
         self.uuid = uuid.uuid4().__str__()
         super(User, self).save(*args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        if self.company:
+            raise ValueError(
+                "cant delete company admin user. before delete user change admin user of company and try again")
+        super(User, self).delete(using, keep_parents)
