@@ -198,6 +198,10 @@ MQTT_ADDRESS = os.getenv('MQTT_ADDRESS')
 
 MQTT_PORT = int(os.getenv('MQTT_PORT'))
 
+MQTT_USER = os.getenv('MQTT_USER')
+
+MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
+
 MQTT_TEMP_TOPIC = os.getenv('MQTT_TEMP_TOPIC')
 
 MQTT_BASE_SEND_TOPIC = os.getenv('MQTT_BASE_SEND_TOPIC')

@@ -60,6 +60,7 @@ class Mqtt:
         self.massage_function = on_massage if on_massage else default_on_massage
         self.disconnect_function = on_disconnect if on_disconnect else default_on_disconnect
         self.client = Client(protocol=protocol)
+        self.client.username_pw_set(self.username, self.password) if self.username and self.password else None
         self.connect()
 
     def connect(self, version=5):
