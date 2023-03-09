@@ -103,6 +103,12 @@ class DeviceViewSet(ModelViewSet):
         assign_perm('hall.change_device', request.user, get_object_or_404(Device, id=res.data['id']))
         return res
 
+    @action(methods=['GET'], detail=True)
+    def get_parameter(self, request, pk):
+        device = get_object_or_404(Device, id=pk)
+        parameter_set = get_objects_for_user(self.request.user, "")
+
+
 
 class HeadViewSet(ModelViewSet):
     permission_classes = [CustomDjangoObjectPermissions]
