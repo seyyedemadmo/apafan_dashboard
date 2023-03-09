@@ -24,11 +24,3 @@ class DeviceParameterModelViewSet(ModelViewSet):
     serializer_class = DeviceParameterSerializer
     queryset = DeviceParameter.objects.all()
 
-    def create(self, request, *args, **kwargs):
-        pass
-
-    def destroy(self, request, *args, **kwargs):
-        pass
-
-    def update(self, request, *args, **kwargs):
-        pass
