@@ -188,16 +188,16 @@ AUTHENTICATION_BACKENDS = (
 
 ADMIN_USER_PERMISSIONS = ["hall", 'production', 'device', 'squad', 'head']
 
-BASE_MQTT_SUBSCRIBE_TOPIC = 'AtiBinCo/Apafan/data/company/#'
+BASE_MQTT_SUBSCRIBE_TOPIC = os.getenv("BASE_MQTT_SUBSCRIBE_TOPIC")
 
-BASE_MQTT_PUBLISH_TOPIC = 'AtiBinCo/Apafan/config/company/'
+BASE_MQTT_PUBLISH_TOPIC = os.getenv('BASE_MQTT_PUBLISH_TOPIC')
 
-BASE_LOG_TOPIC = "AtiBinCo/Apafan/log/"
+BASE_LOG_TOPIC = os.getenv('BASE_LOG_TOPIC')
 
-MQTT_ADDRESS = 'localhost'
+MQTT_ADDRESS = os.getenv('MQTT_ADDRESS')
 
-MQTT_PORT = 1883
+MQTT_PORT = os.getenv('MQTT_PORT')
 
-MQTT_TEMP_TOPIC = "AtiBinCo/Apafan/device/temp/#"
+MQTT_TEMP_TOPIC = os.getenv('MQTT_TEMP_TOPIC')
 
-MQT_BASE_SEND_TOPIC = "AtiBinCo/Apafan/device/send"
+MQT_BASE_SEND_TOPIC = os.getenv('MQT_BASE_SEND_TOPIC')
