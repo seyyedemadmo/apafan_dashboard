@@ -43,10 +43,7 @@ def default_on_massage(client, userdata, msg):
 
 
 def default_on_disconnect(rc, a, b, c):
-    cli = Client()
-    cli.connect('localhost', 1883)
-    cli.publish('test', 'im done :)')
-    cli.disconnect()
+    print("disconnect")
 
 
 class Mqtt:
