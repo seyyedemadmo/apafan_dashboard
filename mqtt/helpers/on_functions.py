@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from hall.models import Device
 from mqtt.helpers.tasks import Mqtt
+from parameter.models import DeviceParameter
 
 
 def send_data_parameter_on_connect(client, userdata, flags, rc, prob=None):
@@ -42,12 +43,28 @@ def send_data_parameter_on_disconnect(rc, a, b, c):
 
 
 def save_parameter_on_message(client, userdata, msg):
-    pass
+    try:
+        print("message arrived")
+        chip_id = msg.topic.split("/")[-1]
+        device = get_object_or_404(Device, chip_ip=chip_id)
+        payload = json.loads(msg.payload.decode("utf-8"))
+        for parameter in payload:
+            if DeviceParameter.objects.filter(key=parameter, device_id=device.id):
+                DeviceParameter.objects.filter(key=parameter, device_id=device.id).update(value=payload[parameter])
+            else:
+                DeviceParameter.objects.create(
+                    key=parameter,
+                    value=payload[parameter],
+                    device_id=device.id
+                )
+    except Exception as e:
+        print("some error append -> {}".format(e.__str__()))
+        pass
 
 
-def save_parameter_on_connect(client, userdata, flags, rc, prob=None)
-    pass
+def save_parameter_on_connect(client, userdata, flags, rc, prob=None):
+    print("user {} connected to broker".format(userdata))
 
 
 def save_parameter_on_disconnect(rc, a, b, c):
-    pass
+    print("by :)")

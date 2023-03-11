@@ -33,7 +33,8 @@ def start_mqtt_parameter_listener():
                   username=getattr(settings, "MQTT_USER", None),
                   password=getattr(settings, "MQTT_PASSWORD", None)
                   )
+    print(getattr(settings, "MQTT_PARAMETER_SEND_TOPIC", None))
     client.listen(getattr(settings, "MQTT_PARAMETER_SEND_TOPIC", None))
-    client.connect_function = None
-    client.massage_function = None
+    client.connect_function = save_parameter_on_connect
+    client.massage_function = save_parameter_on_message
     client.run()
