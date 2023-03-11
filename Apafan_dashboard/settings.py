@@ -92,7 +92,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(os.getenv('REDIS_ADDRESS'), os.getenv('REDIS_PORT'))],
         },
     },
 }
@@ -217,4 +217,3 @@ MQTT_HEAD_PARAMETER_RECEIVE_TOPIC = os.getenv('MQTT_HEAD_PARAMETER_RECEIVE_TOPIC
 MQTT_DEVICE_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_DEVICE_PARAMETER_UPDATE_TOPIC')
 
 MQTT_HEAD_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_HEAD_PARAMETER_UPDATE_TOPIC')
-
