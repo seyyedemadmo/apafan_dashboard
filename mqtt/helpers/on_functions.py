@@ -95,8 +95,8 @@ def save_head_parameter_on_message(client, userdata, msg):
 
 
 def save_head_parameter_on_connect(client, userdata, flags, rc, prob=None):
-    pass
+    print("user {} connected to broker".format(userdata))
 
 
 def save_head_parameter_on_disconnect(rc, a, b, c):
-    pass
+    print("by :)")
