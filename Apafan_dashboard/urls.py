@@ -52,7 +52,7 @@ urlpatterns = [
 
 start_mqtt_data_listener()
 
-start_mqtt_first_up_listener()
+#start_mqtt_first_up_listener()
 
 # for listen to receive parameter from device and head
 start_mqtt_parameter_listener()
