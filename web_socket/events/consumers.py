@@ -1,6 +1,7 @@
 import json
 
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.auth import get_user_model
 
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -11,11 +12,18 @@ from hall.apis.serializers import WebSocketHeadSerializer
 
 class HeadConsumers(WebsocketConsumer):
     def connect(self):
-        self.user = self.scope['user']
-        self.accept()
+        try:
+            headers = dict(self.scope['headers'])
+            uuid = headers['AUTH-UUID']
+            user = get_object_or_404(get_user_model(), uuid=uuid)
+            self.user = user
+            self.accept()
+        except Exception as e:
+            self.close()
 
     def disconnect(self, code):
-        pass
+        self.user.update_uuid()
+        self.close()
 
     def receive(self, text_data=None, bytes_data=None):
         head = get_head(text_data)

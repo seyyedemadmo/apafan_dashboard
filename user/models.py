@@ -21,8 +21,13 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.company:
             self.is_admin = True
-        self.uuid = uuid.uuid4().__str__()
+        if not self.uuid:
+            self.uuid = uuid.uuid4().__str__()
         super(User, self).save(*args, **kwargs)
+
+    def update_uuid(self):
+        self.uuid = uuid.uuid4().__str__()
+        self.save()
 
     def delete(self, using=None, keep_parents=False):
         if self.company:
