@@ -4,7 +4,7 @@ from django.conf import settings
 from mqtt.helpers.on_functions import *
 
 
-def start_mqtt_listener():
+def start_mqtt_data_listener():
     mqtt = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
                 getattr(settings, "MQTT_PORT", None),
                 username=getattr(settings, "MQTT_USER", None),
@@ -14,7 +14,7 @@ def start_mqtt_listener():
     mqtt.run()
 
 
-def listen_to_device():
+def start_mqtt_first_up_listener():
     mqtt = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
                 getattr(settings, "MQTT_PORT", None),
                 username=getattr(settings, "MQTT_USER", None),
@@ -25,3 +25,15 @@ def listen_to_device():
     mqtt.connect_function = send_data_parameter_on_connect
     mqtt.disconnect_function = send_data_parameter_on_disconnect
     mqtt.run()
+
+
+def start_mqtt_parameter_listener():
+    client = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
+                  getattr(settings, "MQTT_PORT", None),
+                  username=getattr(settings, "MQTT_USER", None),
+                  password=getattr(settings, "MQTT_PASSWORD", None)
+                  )
+    client.listen(getattr(settings, "MQTT_PARAMETER_SEND_TOPIC", None))
+    client.connect_function = None
+    client.massage_function = None
+    client.run()

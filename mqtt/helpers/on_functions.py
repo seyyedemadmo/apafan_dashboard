@@ -39,3 +39,15 @@ def send_data_parameter_on_message(client, userdata, msg):
 
 def send_data_parameter_on_disconnect(rc, a, b, c):
     print("disconnected from mqtt topic of temp device")
+
+
+def save_parameter_on_message(client, userdata, msg):
+    pass
+
+
+def save_parameter_on_connect(client, userdata, flags, rc, prob=None)
+    pass
+
+
+def save_parameter_on_disconnect(rc, a, b, c):
+    pass

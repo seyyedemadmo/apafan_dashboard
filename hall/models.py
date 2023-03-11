@@ -57,8 +57,12 @@ class Device(g_models.Model):
 
 class Head(g_models.Model):
     name = models.CharField(null=False, blank=False, max_length=255)
+    head_code = models.IntegerField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_connected = models.BooleanField(default=False)
     last_connected = models.DateTimeField(null=True, blank=True)
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = ['head_code', 'device']
