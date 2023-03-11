@@ -51,7 +51,7 @@ def default_on_disconnect(rc, a, b, c):
 
 class Mqtt:
     def __init__(self, address, port, username=None, password=None, protocol=5, on_connect=None, on_massage=None,
-                 on_disconnect=None):
+                 on_disconnect=None, client_id=None):
         self.address = address
         self.port = port
         self.username = username
@@ -59,7 +59,9 @@ class Mqtt:
         self.connect_function = on_connect if on_connect else default_on_connect
         self.massage_function = on_massage if on_massage else default_on_massage
         self.disconnect_function = on_disconnect if on_disconnect else default_on_disconnect
-        self.client = Client(protocol=protocol)
+        self.client_id = client_id
+        self.client = Client(protocol=protocol, client_id=self.client_id)
+        self.client.username_pw_set(self.username, self.password) if self.username and self.password else None
         self.connect()
 
     def connect(self, version=5):

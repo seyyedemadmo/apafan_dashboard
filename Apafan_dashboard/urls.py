@@ -19,7 +19,8 @@ from django.utils import timezone
 
 from rest_framework import permissions
 
-from mqtt.aysinc_functions.functions import start_mqtt_listener
+from mqtt.aysinc_functions.functions import start_mqtt_data_listener, start_mqtt_parameter_listener, \
+    start_mqtt_head_parameter_listener, start_mqtt_first_up_listener
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -49,4 +50,10 @@ urlpatterns = [
 
 ]
 
-start_mqtt_listener()
+start_mqtt_data_listener()
+
+start_mqtt_first_up_listener()
+
+# for listen to receive parameter from device and head
+start_mqtt_parameter_listener()
+start_mqtt_head_parameter_listener()
