@@ -3,9 +3,9 @@ import json
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
-from hall.models import Device
+from hall.models import Device, Head
 from mqtt.helpers.tasks import Mqtt
-from parameter.models import DeviceParameter
+from parameter.models import DeviceParameter, HeadParameter
 
 
 def send_data_parameter_on_connect(client, userdata, flags, rc, prob=None):
@@ -42,7 +42,7 @@ def send_data_parameter_on_disconnect(rc, a, b, c):
     print("disconnected from mqtt topic of temp device")
 
 
-def save_parameter_on_message(client, userdata, msg):
+def save_device_parameter_on_message(client, userdata, msg):
     try:
         print("message arrived")
         chip_id = msg.topic.split("/")[-1]
@@ -62,9 +62,41 @@ def save_parameter_on_message(client, userdata, msg):
         pass
 
 
-def save_parameter_on_connect(client, userdata, flags, rc, prob=None):
+def save_device_parameter_on_connect(client, userdata, flags, rc, prob=None):
     print("user {} connected to broker".format(userdata))
 
 
-def save_parameter_on_disconnect(rc, a, b, c):
+def save_device_parameter_on_disconnect(rc, a, b, c):
     print("by :)")
+
+
+def save_head_parameter_on_message(client, userdata, msg):
+    try:
+        print("message arrived")
+        chip_id = msg.topic.split("/")[-1]
+        device = get_object_or_404(Device, chip_ip=chip_id)
+        payload = json.loads(msg.payload.decode("utf-8"))
+        for head_code in payload:
+            head = get_object_or_404(Head, head_code=int(head_code), device_id=device.id)
+            for parameter in payload[head_code]:
+                if HeadParameter.objects.filter(head_id=head.id, key=parameter):
+                    HeadParameter.objects.filter(head_id=head.id, key=parameter).update(
+                        value=payload[head_code][parameter])
+                else:
+                    HeadParameter.objects.create(
+                        key=parameter,
+                        value=payload[head_code][parameter],
+                        head_id=head.id
+                    )
+
+    except Exception as e:
+        print("some error append -> {}".format(e.__str__()))
+        pass
+
+
+def save_head_parameter_on_connect(client, userdata, flags, rc, prob=None):
+    pass
+
+
+def save_head_parameter_on_disconnect(rc, a, b, c):
+    pass
