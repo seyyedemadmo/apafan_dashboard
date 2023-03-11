@@ -33,8 +33,21 @@ def start_mqtt_parameter_listener():
                   username=getattr(settings, "MQTT_USER", None),
                   password=getattr(settings, "MQTT_PASSWORD", None)
                   )
-    print(getattr(settings, "MQTT_PARAMETER_SEND_TOPIC", None))
-    client.listen(getattr(settings, "MQTT_PARAMETER_SEND_TOPIC", None))
+    print(getattr(settings, "MQTT_DEVICE_PARAMETER_SEND_TOPIC", None))
+    client.listen(getattr(settings, "MQTT_DEVICE_PARAMETER_SEND_TOPIC", None))
     client.connect_function = save_device_parameter_on_connect
     client.massage_function = save_device_parameter_on_message
+    client.run()
+
+
+def start_mqtt_head_parameter_listener():
+    client = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
+                  getattr(settings, "MQTT_PORT", None),
+                  username=getattr(settings, "MQTT_USER", None),
+                  password=getattr(settings, "MQTT_PASSWORD", None)
+                  )
+    print(getattr(settings, "MQTT_HEAD_PARAMETER_SEND_TOPIC", None))
+    client.listen(getattr(settings, "MQTT_HEAD_PARAMETER_SEND_TOPIC", None))
+    client.connect_function = save_head_parameter_on_connect
+    client.massage_function = save_head_parameter_on_message
     client.run()
