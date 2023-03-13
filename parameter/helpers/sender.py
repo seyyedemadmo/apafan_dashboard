@@ -15,8 +15,10 @@ def send_parameter(topic: str, data: dict):
 
     send_data = {
         "key": data['key'],
+        "address": data['address'] if "address" in data.keys() else data["main_add"],
         "value": data['value'],
         "is_head": False if 'device' in data.keys() else False,
+        "head_code": data['sub_add'] if "sub_add" in data.keys() else None
     }
     str_data = json.dumps(send_data)
 
