@@ -55,6 +55,7 @@ def save_device_parameter_on_message(client, userdata, msg):
                 DeviceParameter.objects.create(
                     key=parameter,
                     value=payload[parameter],
+                    address=int(parameter[1:]),
                     device_id=device.id
                 )
     except Exception as e:
