@@ -48,7 +48,7 @@ class DeviceParameterSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         device = validated_data['device']
-        base_topic = getattr(settings, "MQTT_DEVICE_PARAMETER_RECEIVE_TOPIC")
+        base_topic = getattr(settings, "MQTT_DEVICE_PARAMETER_RECEIVE_TOPI")
         topic = "/".join([base_topic, device.chip_ip])
         send_parameter(topic, validated_data)
         return super(DeviceParameterSerializer, self).update(instance, validated_data)

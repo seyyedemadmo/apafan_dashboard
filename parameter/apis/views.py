@@ -31,14 +31,12 @@ class DeviceParameterModelViewSet(ModelViewSet):
     queryset = DeviceParameter.objects.all()
 
     @action(methods=['GET'], detail=True)
-    def update_parameter(self, request, pk):
+    def update_device_parameter(self, request, pk):
         try:
             device = get_object_or_404(Device, chip_ip=pk)
 
             device_base_topic = getattr(settings, 'MQTT_DEVICE_PARAMETER_UPDATE_TOPIC', None)
-            head_base_topic = getattr(settings, 'MQTT_HEAD_PARAMETER_UPDATE_TOPIC', None)
 
-            head_topic = "/".join([head_base_topic, device.chip_ip])
             device_topic = "/".join([device_base_topic, device.chip_ip])
 
             client = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
@@ -46,7 +44,26 @@ class DeviceParameterModelViewSet(ModelViewSet):
                           username=getattr(settings, "MQTT_USER", None),
                           password=getattr(settings, "MQTT_PASSWORD", None)
                           )
-            client.send(head_topic, '1')
+            client.send(device_topic, '1')
+
+            return Response(data='update parameter successful', status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(data='we have some error in update parameter: {}'.format(e.__str__()), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(methods=['GET'], detail=True)
+    def update_head_parameter(self, request, pk):
+        try:
+            device = get_object_or_404(Device, chip_ip=pk)
+
+            device_base_topic = getattr(settings, 'MQTT_HEAD_PARAMETER_UPDATE_TOPIC', None)
+
+            device_topic = "/".join([device_base_topic, device.chip_ip])
+
+            client = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
+                          getattr(settings, "MQTT_PORT", None),
+                          username=getattr(settings, "MQTT_USER", None),
+                          password=getattr(settings, "MQTT_PASSWORD", None)
+                          )
             client.send(device_topic, '1')
 
             return Response(data='update parameter successful', status=status.HTTP_200_OK)
