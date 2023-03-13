@@ -5,7 +5,9 @@ from hall.models import Head, Device
 
 class HeadParameter(models.Model):
     key = models.CharField(null=False, blank=False, max_length=255)
-    value = models.CharField(null=False, blank=False, max_length=255)  # TODO ask for type of value and required
+    sub_add = models.IntegerField(null=False, blank=False, max_length=255)
+    main_add = models.IntegerField(null=False, blank=False, max_length=511)
+    value = models.IntegerField(null=False, blank=False, max_length=65545)
     head = models.ForeignKey(Head, on_delete=models.CASCADE)
 
     class Meta:
@@ -14,7 +16,8 @@ class HeadParameter(models.Model):
 
 class DeviceParameter(models.Model):
     key = models.CharField(null=False, blank=False, max_length=255)
-    value = models.CharField(null=False, blank=False, max_length=255)  # TODO ask for type of value and required
+    address = models.IntegerField(null=False, blank=False, max_length=511)
+    value = models.IntegerField(null=False, blank=False, max_length=65545)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
 
     class Meta:
