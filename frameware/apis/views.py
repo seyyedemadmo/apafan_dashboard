@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 
-from frameware.enums import company_map, version_map
+from frameware.enums import company_map, version_map, parameter_group
 
 
 class FrameView(APIView):
@@ -21,9 +21,11 @@ class FrameView(APIView):
 class ParameterFileView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, c_id, f_id):
+    def get(self, request, c_id, f_id, v_id):
         c_id = self.kwargs['c_id']
         f_id = self.kwargs['f_id']
-        path = "files/{}/tem/data/{}/".format(company_map[c_id], version_map[f_id])
-        data = {"file": path}
+        v_id = self.kwargs['v_i']
+        path = "files/{}/tem/data/{}/{}".format(company_map[c_id], version_map[f_id], parameter_group[v_id])
+        data = {"file": path,
+                "version": 5}
         return Response(data=data, status=status.HTTP_200_OK)
