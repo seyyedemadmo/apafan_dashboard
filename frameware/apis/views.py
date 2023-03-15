@@ -24,7 +24,7 @@ class ParameterFileView(APIView):
     def get(self, request, c_id, f_id, v_id):
         c_id = self.kwargs['c_id']
         f_id = self.kwargs['f_id']
-        v_id = self.kwargs['v_i']
+        v_id = self.kwargs['v_id']
         path = "files/{}/tem/data/{}/{}".format(company_map[c_id], version_map[f_id], parameter_group[v_id])
         data = {"file": path,
                 "version": 5}
