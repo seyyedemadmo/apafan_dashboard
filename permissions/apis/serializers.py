@@ -9,3 +9,10 @@ class PermissionSerializer(ModelSerializer):
     class Meta:
         model = PermissionProxy
         fields = ['id', 'name', 'codename', 'translate']
+
+
+class PermissionAddSerializer(serializers.Serializer):
+    perms = serializers.ListSerializer(
+        child=serializers.IntegerField()
+    )
+
