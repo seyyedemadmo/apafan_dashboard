@@ -60,3 +60,9 @@ class RemoveUserPermissionView(CreateAPIView):
             return Response(data='permissions removed successfully', status=status.HTTP_200_OK)
         except Exception as e:
             raise APIException("some error happened in server -> {}".format(e.__str__()))
+
+
+class AllPermissionsViewSet(ListModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PermissionSerializer
+    queryset = PermissionProxy.objects.all()
