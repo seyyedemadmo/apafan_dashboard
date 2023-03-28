@@ -186,6 +186,9 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
+
+OBJECT_PERMISSION_MODEL = ['device', 'head',]
+
 ADMIN_USER_PERMISSIONS = ["hall", 'production', 'device', 'squad', 'head']
 
 BASE_MQTT_SUBSCRIBE_TOPIC = os.getenv("BASE_MQTT_SUBSCRIBE_TOPIC")

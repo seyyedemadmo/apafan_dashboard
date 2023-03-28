@@ -15,4 +15,3 @@ class PermissionAddSerializer(serializers.Serializer):
     perms = serializers.ListSerializer(
         child=serializers.IntegerField()
     )
-
