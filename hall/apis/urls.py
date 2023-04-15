@@ -1,3 +1,5 @@
+from django.urls import path, include
+
 from rest_framework import routers
 
 from hall.apis.views import HallViewSet, HeadViewSet, GroupViewSet, CompanyViewSet, DeviceViewSet, \
@@ -12,5 +14,5 @@ router.register('production', ProductionView, basename='production')
 router.register('device', DeviceViewSet, basename='device')
 
 urlpatterns = [
-
+                  path("temp_device/", include("device.apis.urls"))
               ] + router.urls

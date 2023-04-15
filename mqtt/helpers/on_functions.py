@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
+from device.models import TempDevice
 from hall.models import Device, Head
 from mqtt.helpers.tasks import Mqtt
 from parameter.models import DeviceParameter, HeadParameter
@@ -101,3 +102,28 @@ def save_head_parameter_on_connect(client, userdata, flags, rc, prob=None):
 
 def save_head_parameter_on_disconnect(rc, a, b, c):
     print("by :)")
+
+
+def save_temp_device_on_message(client, userdata, msg):
+    try:
+        chip_id = msg.topic.split("/")[-1]
+        payload = json.loads(msg.payload.decode("utf-8"))
+        mac_address = payload['mac']
+        ready = payload['ready']
+        print(payload)
+        if ready:
+            if TempDevice.objects.filter(chip_id=chip_id):
+                TempDevice.objects.filter(chip_id=chip_id).update(mac_address=mac_address, ready=ready)
+            else:
+                TempDevice.objects.create(chip_id=chip_id, mac_address=mac_address, ready=ready)
+        else:
+            TempDevice.objects.filter(chip_id=chip_id).delete()
+    except Exception as e:
+        print("we have some error -> {}".format(e.__str__()))
+        pass
+
+
+def save_temp_device_on_disconnect(client, userdata, rc):
+    print(client)
+    print(userdata)
+    print(rc)
