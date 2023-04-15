@@ -62,8 +62,7 @@ def start_mqtt_temp_device_listener():
                   password=getattr(settings, "MQTT_PASSWORD", None),
                   client_id="temp_device_listener"
                   )
-    print(getattr(settings, "MQTT_TEMP_DEVICE_TOPIC", None))
-    client.listen(getattr(settings, "MQTT_TEMP_DEVICE_TOPIC", None))
+    client.listen("AtiBinCo/Apafan/company/device/temp/#")
     client.connect_function = save_head_parameter_on_connect
     client.massage_function = save_temp_device_on_message
     client.run()
