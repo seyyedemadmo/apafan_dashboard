@@ -152,8 +152,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
-        'Apafan_dashboard.rendrer.CustomJSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PARSER_CLASSES': [
@@ -165,7 +165,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'Apafan_dashboard.authoraization.CustomAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 50
 }
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 24 * 60 * 60
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -186,8 +191,7 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
-
-OBJECT_PERMISSION_MODEL = ['device', 'head',]
+OBJECT_PERMISSION_MODEL = ['device', 'head', ]
 
 ADMIN_USER_PERMISSIONS = ["hall", 'production', 'device', 'squad', 'head']
 
@@ -222,4 +226,3 @@ MQTT_DEVICE_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_DEVICE_PARAMETER_UPDATE_TOP
 MQTT_HEAD_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_HEAD_PARAMETER_UPDATE_TOPIC')
 
 MQTT_TEMP_DEVICE_TOPIC = os.getenv('MQTT_TEMP_DEVICE_TOPIC')
-
