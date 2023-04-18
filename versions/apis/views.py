@@ -11,7 +11,7 @@ from versions.apis.serializers import ListVersionSerializer, CreateVersionSerial
 class CreateDestroyListVersionViewSet(ListModelMixin, CreateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = [IsSuperUser]
     filter_backends = [SearchFilter]
-    search_fields = ['company', 'group']
+    search_fields = ['type']
 
     def get_serializer_class(self):
         if self.action == "list":

@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from user.api.views import UserCreateListUpdateViewSet, ChangeUserPasswordViewSet, SelfUserViewSet
+from user.api.views import UserCreateListUpdateViewSet, ChangeUserPasswordViewSet, SelfUserViewSet, \
+    ActiveUserCountAPIView
 
 router = routers.DefaultRouter()
 router.register("user", UserCreateListUpdateViewSet, basename='user_list_create_update')
@@ -25,5 +26,6 @@ router.register("change_password", ChangeUserPasswordViewSet, basename='change_p
 
 urlpatterns = [
                   path('self/retrieve/', SelfUserViewSet.as_view({'get': 'retrieve'}), ),
-                  path('self/update/', SelfUserViewSet.as_view({'put': 'update', "patch": "update"}))
+                  path('self/update/', SelfUserViewSet.as_view({'put': 'update', "patch": "update"})),
+                  path('detail/', ActiveUserCountAPIView.as_view())
               ] + router.urls
