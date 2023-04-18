@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'web_socket',
     'permissions',
     'parameter',
+    'versions',
     # installed app
     'rest_framework',
     'drf_yasg',
@@ -170,7 +171,7 @@ REST_FRAMEWORK = {
 }
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 1* 60 * 60
+SESSION_COOKIE_AGE = 1 * 60 * 60
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
