@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'web_socket',
     'permissions',
     'parameter',
+    'versions',
     # installed app
     'rest_framework',
     'drf_yasg',
