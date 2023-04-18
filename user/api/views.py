@@ -1,7 +1,11 @@
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +14,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
 
+from permissions.permissions import IsAdminOrSuperUser
 from user.api.serializers import RegisterUserSerializers, ListUserSerializers, UpdateUserSerializers, \
     RetrieveUserSerializers, ChangePasswordSerializers, SelfUserSerializers, SelfUserUpdateSerializers, \
     AdminUserSerializers, AdminCreateUserSerializers
@@ -83,3 +88,26 @@ class SelfUserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
             return SelfUserSerializers
         else:
             return SelfUserUpdateSerializers
+
+
+class ActiveUserCountAPIView(APIView):
+    permission_classes = [IsAdminOrSuperUser]
+
+    def get(self, request):
+        all_user = len(get_user_model().objects.all())
+        band_user = len(get_user_model().objects.filter(is_band=True))
+        sessions = Session.objects.filter(expire_date__gte=timezone.now())
+        uid_list = []
+
+        # Build a list of user ids from that query
+        for session in sessions:
+            data = session.get_decoded()
+            uid_list.append(data.get('_auth_user_id', None))
+        active_user = len(get_user_model().objects.filter(id__in=uid_list))
+        session_active = len(sessions)
+        return Response(data={
+            "active_user": active_user,
+            "all_user": all_user,
+            "band_user": band_user,
+            "session_active": session_active
+        }, status=status.HTTP_200_OK)
