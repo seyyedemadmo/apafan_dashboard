@@ -29,7 +29,7 @@ def default_on_massage(client, userdata, msg):
 
             head = get_object_or_404(Device, chip_ip=chip_id)
 
-            if head not in Device.objects.filter(device__group__production__hall__company_id=company.id):
+            if head not in Device.objects.filter(group__production__hall__company_id=company.id):
                 print("head device not valid for this company", file=f)
                 pass
             HeadData.objects.create(
