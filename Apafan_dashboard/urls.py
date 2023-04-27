@@ -47,6 +47,7 @@ urlpatterns = [
     path('api/permissions/', include('permissions.apis.urls')),
     path('api/objectpermissions/', include('objectpermissions.apis.urls')),
     path('api/versions/', include('versions.apis.urls')),
+    path('api/setting/', include('setting.apis.urls')),
     re_path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
