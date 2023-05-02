@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import authenticate
 
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework.exceptions import ValidationError
@@ -111,3 +112,14 @@ class SelfUserUpdateSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ['first_name', 'last_name', 'email']
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Incorrect Credentials")

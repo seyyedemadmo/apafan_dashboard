@@ -17,15 +17,19 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from user.api.views import UserCreateListUpdateViewSet, ChangeUserPasswordViewSet, SelfUserViewSet, \
-    ActiveUserCountAPIView
+    ActiveUserCountAPIView, LoginViewSet, LogoutView
 
 router = routers.DefaultRouter()
 router.register("user", UserCreateListUpdateViewSet, basename='user_list_create_update')
 router.register("change_password", ChangeUserPasswordViewSet, basename='change_password')
+router.register("login", LoginViewSet, basename='login')
+
+
 # router.register("self", SelfUserViewSet, basename='get_self_user')
 
 urlpatterns = [
                   path('self/retrieve/', SelfUserViewSet.as_view({'get': 'retrieve'}), ),
                   path('self/update/', SelfUserViewSet.as_view({'put': 'update', "patch": "update"})),
-                  path('detail/', ActiveUserCountAPIView.as_view())
+                  path('detail/', ActiveUserCountAPIView.as_view()),
+                  path('logout/', LogoutView.as_view())
               ] + router.urls
