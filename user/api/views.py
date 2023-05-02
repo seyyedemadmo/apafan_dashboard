@@ -1,14 +1,17 @@
 from django.contrib.sessions.models import Session
 from django.utils import timezone
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, permissions, status
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from .serializers import LoginSerializer
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -111,3 +114,23 @@ class ActiveUserCountAPIView(APIView):
             "band_user": band_user,
             "session_active": session_active
         }, status=status.HTTP_200_OK)
+
+
+class LoginViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
