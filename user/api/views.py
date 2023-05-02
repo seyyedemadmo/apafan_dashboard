@@ -2,13 +2,12 @@ from django.contrib.sessions.models import Session
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin, CreateModelMixin
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, permissions, status
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .serializers import LoginSerializer
@@ -16,6 +15,7 @@ from .serializers import LoginSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import login, logout
 
 from permissions.permissions import IsAdminOrSuperUser
 from user.api.serializers import RegisterUserSerializers, ListUserSerializers, UpdateUserSerializers, \
@@ -116,21 +116,22 @@ class ActiveUserCountAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class LoginViewSet(viewsets.ViewSet):
+class LoginViewSet(CreateModelMixin, GenericViewSet):
     permission_classes = [permissions.AllowAny]
+    serializer_class = LoginSerializer
+    queryset = ""
 
-    def create(self, request):
-        serializer = LoginSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        request.user.auth_token.delete()
+        logout(request)
         return Response(status=status.HTTP_200_OK)

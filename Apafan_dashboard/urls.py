@@ -18,6 +18,7 @@ from django.urls import path, include, re_path
 from django.utils import timezone
 
 from rest_framework import permissions
+from rest_framework.authtoken import views as rest_view
 
 from mqtt.aysinc_functions.functions import start_mqtt_data_listener, start_mqtt_parameter_listener, \
     start_mqtt_head_parameter_listener, start_mqtt_first_up_listener, start_mqtt_temp_device_listener
@@ -39,7 +40,6 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('api/auth/', include('rest_framework.urls')),
     path('api/user/', include('user.api.urls')),
     path('api/hall/', include('hall.apis.urls')),
     path('api/parameter/', include('parameter.apis.urls')),
@@ -49,6 +49,7 @@ urlpatterns = [
     path('api/versions/', include('versions.apis.urls')),
     path('api/setting/', include('setting.apis.urls')),
     path('api/user-auth/', include('rest_framework.urls')),
+    path('api/auth/', rest_view.ObtainAuthToken.as_view(), name='برای login , logout از سامانه'),
     re_path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
