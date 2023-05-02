@@ -1,12 +1,12 @@
 from rest_framework import exceptions
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 
 from django.contrib.auth import get_user_model
 
 from datetime import datetime
 
 
-class CustomAuthentication(SessionAuthentication):
+class CustomAuthentication(TokenAuthentication):
     def authenticate(self, request):
         user = super(CustomAuthentication, self).authenticate(request)
         if not user:

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'versions',
     # installed app
     'rest_framework',
+    "rest_framework.authtoken",
     'drf_yasg',
     'guardian',
     'corsheaders',
