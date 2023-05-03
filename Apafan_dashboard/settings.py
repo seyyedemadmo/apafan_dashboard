@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'versions',
     # installed app
     'rest_framework',
-    "rest_framework.authtoken",
+    'rest_framework_simplejwt',
     'drf_yasg',
     'guardian',
     'corsheaders',
@@ -89,6 +89,11 @@ TEMPLATES = [
         },
     },
 ]
+
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Token',),
+}
 
 WSGI_APPLICATION = 'Apafan_dashboard.wsgi.application'
 
@@ -182,12 +187,13 @@ SWAGGER_ENABLE = True
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
-        'basic': {
-            'type': 'basic'
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
         }
     },
-    "LOGIN_URL": "/api/auth/login/",
-    "LOGOUT_URL": "/api/auth/logout/",
+    "LOGIN_URL": "/api/auth/",
 }
 
 REDOC_SETTINGS = {

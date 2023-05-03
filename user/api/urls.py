@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from user.api.views import UserCreateListUpdateViewSet, ChangeUserPasswordViewSet, SelfUserViewSet, \
-    ActiveUserCountAPIView, LoginViewSet, LogoutView
+    ActiveUserCountAPIView, LogoutView
 
 router = routers.DefaultRouter()
 router.register("user", UserCreateListUpdateViewSet, basename='user_list_create_update')
 router.register("change_password", ChangeUserPasswordViewSet, basename='change_password')
-
+router.register("logout", LogoutView, basename='Logout')
 
 # router.register("self", SelfUserViewSet, basename='get_self_user')
 

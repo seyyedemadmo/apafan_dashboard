@@ -28,3 +28,4 @@ aiohttp~=3.8.4
 channels~=4.0.0
 daphne==4.0.0
 django-cors-headers==3.14.0
+djangorestframework-simplejwt==5.2.2

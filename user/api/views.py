@@ -116,22 +116,10 @@ class ActiveUserCountAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class LoginViewSet(CreateModelMixin, GenericViewSet):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = LoginSerializer
+class LogoutView(CreateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = ""
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.validated_data
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        logout(request)
-        return Response(status=status.HTTP_200_OK)
+        print(request.user.is_superuser)
+        pass
