@@ -23,6 +23,7 @@ from hall.models import Company, Hall, Production, Squad, Device, Head
 
 
 class CompanyViewSet(ModelViewSet):
+    """ crud api for Company permission is super user only"""
     permission_classes = [IsSuperUser]
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
@@ -39,6 +40,7 @@ class CompanyViewSet(ModelViewSet):
 
 
 class HallViewSet(ModelViewSet):
+    """برای ساخت سالن های کارحانه ها این تنها برای کسانی که دسترسی ان را دارند فعال هست"""
     authentication_classes = [CustomAuthentication]
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [HallListObjectPermissionFilterBackend, SearchFilter]
@@ -63,6 +65,7 @@ class HallViewSet(ModelViewSet):
 
 
 class ProductionView(ModelViewSet):
+    """برای ساخت و نمایش داده های خط تولید مورد استفاده قرار مگیرد این مجموعه نیز دارای دسترسی هستند"""
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [ProductionListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
@@ -77,6 +80,7 @@ class ProductionView(ModelViewSet):
 
 
 class GroupViewSet(ModelViewSet):
+    """برای نمایش داده های گروه ها و دارای دسترسی خاص خود"""
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [GroupListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
@@ -91,6 +95,9 @@ class GroupViewSet(ModelViewSet):
 
 
 class DeviceViewSet(ModelViewSet):
+    """
+    برای اسجاد دستگاه این مجموعه برای ورژن اول مورد نیاز هست و دارای دسترسی هست (در فاز اول تنها نیازی به پیاده سازی دسترسی ان نیست)
+    """
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [DeviceListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name', 'code']
@@ -111,6 +118,9 @@ class DeviceViewSet(ModelViewSet):
 
 
 class HeadViewSet(ModelViewSet):
+    """
+    برای عملیات بر روی head ها هست
+    """
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [HeadListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name', 'chip_id']

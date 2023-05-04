@@ -25,6 +25,9 @@ from user.permissions import IsAdmin, IsSelf
 
 
 class UserCreateListUpdateViewSet(ModelViewSet):
+    """
+    for register user and see list of user in app
+    """
     permission_classes = [IsAdmin]
     filter_backends = [SearchFilter]
     search_fields = ['username', 'first_name', 'last_name', 'uuid']
@@ -55,6 +58,7 @@ class UserCreateListUpdateViewSet(ModelViewSet):
 
 
 class ChangeUserPasswordViewSet(UpdateModelMixin, GenericViewSet):
+    """for change password of user by an other user"""
     permission_classes = [IsAdmin | IsSelf]
     lookup_field = 'username'
     serializer_class = ChangePasswordSerializers
@@ -80,6 +84,9 @@ class ChangeUserPasswordViewSet(UpdateModelMixin, GenericViewSet):
 
 
 class SelfUserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    """
+    all api that self user can do it for yourself
+    """
     permission_classes = [IsAuthenticated]
     queryset = get_user_model().objects.all()
 
@@ -94,6 +101,7 @@ class SelfUserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
 
 
 class ActiveUserCountAPIView(APIView):
+    """api for view all active user count"""
     permission_classes = [IsAdminOrSuperUser]
 
     def get(self, request):
@@ -115,11 +123,3 @@ class ActiveUserCountAPIView(APIView):
             "session_active": session_active
         }, status=status.HTTP_200_OK)
 
-
-class LogoutView(CreateModelMixin, GenericViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = ""
-
-    def create(self, request, *args, **kwargs):
-        print(request.user.is_superuser)
-        pass
