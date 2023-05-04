@@ -7,6 +7,7 @@ from device.models import TempDevice
 
 
 class ShowTempDeviceViewSet(ListModelMixin, GenericViewSet):
+    """نمایش دستکاه های اماده اتصال"""
     permission_classes = [IsAuthenticated]
     serializer_class = TempDeviceSerializers
     queryset = TempDevice.objects.all()
