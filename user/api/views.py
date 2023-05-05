@@ -10,6 +10,8 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
+from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView, TokenRefreshView
+
 from .serializers import LoginSerializer
 
 from django.contrib.auth import get_user_model
@@ -123,3 +125,26 @@ class ActiveUserCountAPIView(APIView):
             "session_active": session_active
         }, status=status.HTTP_200_OK)
 
+
+class CustomObtainToken(TokenObtainPairView):
+    """
+    for get user token
+    """
+
+    def post(self, request, *args, **kwargs):
+        res = super(CustomObtainToken, self).post(request, args, kwargs)
+        if res.status_code == 401:
+            res.status_code = status.HTTP_400_BAD_REQUEST
+        return res
+
+
+class CustomRefreshToken(TokenRefreshView):
+    """
+    for refresh token of user
+    """
+
+    def post(self, request, *args, **kwargs):
+        res = super(TokenRefreshView, self).post(request, args, kwargs)
+        if res.status_code == 401:
+            res.status_code = status.HTTP_400_BAD_REQUEST
+        return res
