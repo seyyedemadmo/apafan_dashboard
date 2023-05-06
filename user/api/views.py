@@ -138,6 +138,7 @@ class CustomObtainToken(TokenObtainPairView):
         except:
             raise CustomInvalidToken("invalid username or not fount")
 
+
 class CustomRefreshToken(TokenRefreshView):
     """
     for refresh token of user
@@ -147,4 +148,4 @@ class CustomRefreshToken(TokenRefreshView):
         try:
             return super(TokenRefreshView, self).post(request, args, kwargs)
         except:
-            return Response("No active account found with the given credentials", status=status.HTTP_400_BAD_REQUEST)
+            raise CustomInvalidToken("invalid username or not fount")
