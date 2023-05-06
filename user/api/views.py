@@ -12,6 +12,7 @@ from rest_framework.response import Response
 
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView, TokenRefreshView
 
+from Apafan_dashboard.exeptions import CustomInvalidToken
 from .serializers import LoginSerializer
 
 from django.contrib.auth import get_user_model
@@ -132,10 +133,10 @@ class CustomObtainToken(TokenObtainPairView):
     """
 
     def post(self, request, *args, **kwargs):
-        res = super(CustomObtainToken, self).post(request, args, kwargs)
-        if res.status_code == 401:
-            res.status_code = status.HTTP_400_BAD_REQUEST
-        return res
+        try:
+            return super(CustomObtainToken, self).post(request, args, kwargs)
+        except:
+            raise CustomInvalidToken("invalid username or not fount")
 
 
 class CustomRefreshToken(TokenRefreshView):
@@ -144,7 +145,7 @@ class CustomRefreshToken(TokenRefreshView):
     """
 
     def post(self, request, *args, **kwargs):
-        res = super(TokenRefreshView, self).post(request, args, kwargs)
-        if res.status_code == 401:
-            res.status_code = status.HTTP_400_BAD_REQUEST
-        return res
+        try:
+            return super(TokenRefreshView, self).post(request, args, kwargs)
+        except:
+            raise CustomInvalidToken("invalid username or not fount")
