@@ -1,7 +1,8 @@
 import json
 
-from rest_framework.renderers import JSONRenderer
 from rest_framework.status import is_success
+from rest_framework.renderers import JSONRenderer
+from rest_framework.utils import json
 
 
 def manage_error(errors, temp_list=[]):
