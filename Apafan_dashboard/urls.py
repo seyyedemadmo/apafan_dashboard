@@ -41,7 +41,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('api/user/', include('user.api.urls')),
-    path('api/hall/', include('hall.apis.urls')),
+    path('api/main/', include('hall.apis.urls')),
     path('api/parameter/', include('parameter.apis.urls')),
     path('api/frameware/', include('frameware.apis.urls')),
     path('api/permissions/', include('permissions.apis.urls')),
