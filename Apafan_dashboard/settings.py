@@ -90,7 +90,6 @@ TEMPLATES = [
     },
 ]
 
-
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Token',),
 }
@@ -164,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'rest_framework.renderers.JSONRenderer',
+        'Apafan_dashboard.rendrer.CustomJSONRenderer',
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PARSER_CLASSES': [
