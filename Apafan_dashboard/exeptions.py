@@ -1,5 +1,7 @@
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
+from django.utils.translation import gettext_lazy as _
+
 
 
 class CustomInvalidToken(AuthenticationFailed):
