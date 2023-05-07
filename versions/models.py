@@ -20,9 +20,3 @@ class Version(models.Model):
     file = models.FileField(upload_to=getattr(settings, 'VERSION_PATH_TO_UPLOAD', None), blank=False, null=False)
     next_version = models.ForeignKey('Version', on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        mine_type = mimetypes.guess_type(self.file)
-        if not mine_type[0] == "application/octet-stream":
-            ValidationError("you must enter a .bin file")
-        super(Version, self).save(force_insert, force_update, using, update_fields)

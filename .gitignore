@@ -5,3 +5,4 @@
 error.log
 setting.json
 global_setting.py
+data/*
