@@ -1,3 +1,4 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
@@ -9,13 +10,11 @@ class CreateVersionSerializer(ModelSerializer):
         model = Version
         exclude = ['created_at', 'next_version']
 
-    def create(self, validated_data):
-        now_version = Version.objects.create(**validated_data)
-        past_version = Version.objects.filter(company=validated_data['company'].id, group=validated_data['group'],
-                                              next_version=None, type=validated_data['type'])
-        if past_version:
-            past_version.update(next_version=now_version)
-        return validated_data
+    def validate(self, attrs):
+        mine_type = attrs['file'].content_type
+        if not mine_type == "application/octet-stream":
+            raise ValidationError("you must enter a .bin file")
+        return attrs
 
 
 class ListVersionSerializer(ModelSerializer):

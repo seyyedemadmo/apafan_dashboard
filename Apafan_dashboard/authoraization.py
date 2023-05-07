@@ -6,7 +6,6 @@ from datetime import datetime
 class CustomAuthentication(JWTAuthentication):
 
     def authenticate(self, request):
-        request.META['CONTENT_TYPE'] = 'multipart/form-data'
         user = super(CustomAuthentication, self).authenticate(request)
         if not user:
             return None

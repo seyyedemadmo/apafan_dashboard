@@ -94,6 +94,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Token',),
 }
 
+
 WSGI_APPLICATION = 'Apafan_dashboard.wsgi.application'
 
 ASGI_APPLICATION = "Apafan_dashboard.asgi.application"

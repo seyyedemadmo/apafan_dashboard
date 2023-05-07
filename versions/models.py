@@ -22,7 +22,8 @@ class Version(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        mine_type = mimetypes.guess_type(self.file)
-        if not mine_type[0] == "application/octet-stream":
-            ValidationError("you must enter a .bin file")
         super(Version, self).save(force_insert, force_update, using, update_fields)
+        past_version = Version.objects.filter(company_id=self.company.id, group_id=self.group.id, type=self.type,
+                                              next_version=None).exclude(id=self.id)
+        if past_version:
+            past_version.update(next_version=self.id)
