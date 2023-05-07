@@ -1,5 +1,6 @@
 from django.contrib.sessions.models import Session
 from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin, CreateModelMixin
@@ -13,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView, TokenRefreshView
 
 from Apafan_dashboard.exeptions import CustomInvalidToken
-from .serializers import LoginSerializer
+from .serializers import LoginSerializer, RefreshTokenSerializer, TokenSerializer
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -132,6 +133,13 @@ class CustomObtainToken(TokenObtainPairView):
     for get user token
     """
 
+    @swagger_auto_schema(
+        responses={
+            200: TokenSerializer(),
+            400: 'Bad Request',
+            403: 'Permission Denied'
+        }
+    )
     def post(self, request, *args, **kwargs):
         try:
             return super(CustomObtainToken, self).post(request, args, kwargs)
@@ -144,6 +152,13 @@ class CustomRefreshToken(TokenRefreshView):
     for refresh token of user
     """
 
+    @swagger_auto_schema(
+        responses={
+            200: RefreshTokenSerializer(),
+            400: 'Bad Request',
+            403: 'Permission Denied'
+        }
+    )
     def post(self, request, *args, **kwargs):
         try:
             return super(TokenRefreshView, self).post(request, args, kwargs)

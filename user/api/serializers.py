@@ -123,3 +123,12 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
+
+
+class TokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField(required=True)
+    access = serializers.CharField(required=True)
+
+
+class RefreshTokenSerializer(serializers.Serializer):
+    access = serializers.CharField(required=True)

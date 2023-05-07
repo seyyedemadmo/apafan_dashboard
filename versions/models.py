@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from rest_framework.exceptions import ValidationError
@@ -16,7 +17,7 @@ class Version(models.Model):
     group = models.ForeignKey(Squad, on_delete=models.CASCADE, blank=False, null=False)
     type = models.CharField(choices=TYPE_CHOICE.choices, default=TYPE_CHOICE.FRAME, max_length=255, null=False,
                             blank=False)
-    file = models.FilePathField(path="data/version/", blank=False, null=False)
+    file = models.FileField(upload_to=getattr(settings, 'VERSION_PATH_TO_UPLOAD', None), blank=False, null=False)
     next_version = models.ForeignKey('Version', on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

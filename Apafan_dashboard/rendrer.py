@@ -48,7 +48,7 @@ class CustomJSONRenderer(JSONRenderer):
                 errors = manage_error(rendered, error_list)
 
         response_data = {
-            'result': rendered if is_success(response.status_code) else [],
+            'results': rendered if is_success(response.status_code) else [],
             'status': response.status_code,
             'success': is_success(response.status_code),
             'messages': [] if is_success(response.status_code) else errors,
