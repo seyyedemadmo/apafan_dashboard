@@ -94,8 +94,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Token',),
 }
 
-MEDIA_URL = '/data/'
-MEDIA_ROOT = BASE_DIR
 
 WSGI_APPLICATION = 'Apafan_dashboard.wsgi.application'
 
