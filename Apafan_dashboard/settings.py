@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'guardian',
     'corsheaders',
+    'drf_spectacular',
 
 ]
 
@@ -93,7 +94,6 @@ TEMPLATES = [
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Token',),
 }
-
 
 WSGI_APPLICATION = 'Apafan_dashboard.wsgi.application'
 
@@ -163,10 +163,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'Apafan_dashboard.rendrer.CustomJSONRenderer',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.MultiPartParser',
@@ -196,7 +196,10 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization'
         }
     },
-    "LOGIN_URL": "/api/auth/",
+    "LOGIN_URL": "/api/user-auth/login",
+    'UI_RENDERERS': [
+        'Apafan_dashboard.rendrer.CustomJSONRenderer',
+    ]
 }
 
 REDOC_SETTINGS = {

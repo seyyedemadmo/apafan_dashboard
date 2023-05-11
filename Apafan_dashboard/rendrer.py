@@ -4,10 +4,6 @@ from rest_framework.status import is_success
 from rest_framework.renderers import JSONRenderer
 from rest_framework.utils import json
 
-from drf_yasg.generators import OpenAPISchemaGenerator
-from drf_yasg import openapi
-from rest_framework.pagination import PageNumberPagination
-
 
 def manage_error(errors, temp_list=[]):
     temp_list_2 = []
@@ -61,29 +57,3 @@ class CustomJSONRenderer(JSONRenderer):
         if response_data['status'] == 500:
             print(response_data)
         return response
-
-
-class CustomSchemaGenerator(OpenAPISchemaGenerator):
-    def get_pagination_parameters(self, view):
-        if isinstance(getattr(view, 'pagination_class', None), PageNumberPagination):
-            return [
-                openapi.Parameter('page', in_=openapi.IN_QUERY, description='Page number', type=openapi.TYPE_INTEGER),
-                openapi.Parameter('page_size', in_=openapi.IN_QUERY, description='Number of results per page',
-                                  type=openapi.TYPE_INTEGER),
-            ]
-        return []
-
-    def get_default_responses(self, response_serializers):
-        responses = super().get_default_responses(response_serializers)
-        responses['200'] = openapi.Response(
-            description='Success',
-            schema=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'success': openapi.Schema(type=openapi.TYPE_BOOLEAN),
-                    'message': openapi.Schema(type=openapi.TYPE_STRING),
-                    'data': responses['200'].schema,
-                }
-            ),
-        )
-        return responses

@@ -1,19 +1,16 @@
 from django.shortcuts import get_object_or_404
-from django.forms.models import model_to_dict
-
-from guardian.shortcuts import get_objects_for_user
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 
 from guardian.shortcuts import assign_perm
 
 from Apafan_dashboard.authoraization import CustomAuthentication
 from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
+from Apafan_dashboard.serializers import GlobalSerializer
 
 from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionSerializer, GroupSerializer, \
     DeviceSerializer, HeadSerializer
@@ -46,7 +43,7 @@ class HallViewSet(ModelViewSet):
     filter_backends = [HallListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
     queryset = Hall.objects.all()
-    serializer_class = HallSerializer
+    serializer_class = GlobalSerializer
 
     def create(self, request, *args, **kwargs):
         res = super(HallViewSet, self).create(request, *args, **kwargs)
