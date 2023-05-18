@@ -99,10 +99,10 @@ WSGI_APPLICATION = 'Apafan_dashboard.wsgi.application'
 ASGI_APPLICATION = "Apafan_dashboard.asgi.application"
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(os.getenv('REDIS_ADDRESS'), os.getenv('REDIS_PORT'))],
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
         },
     },
 }
