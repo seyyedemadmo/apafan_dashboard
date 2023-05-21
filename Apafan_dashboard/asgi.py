@@ -17,6 +17,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
 import web_socket.events.routing
+from web_socket.middleware import UUIDAuthMiddleware
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Apafan_dashboard.settings')
 
@@ -25,6 +26,6 @@ django_asgi_app = get_asgi_application()
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
-        AuthMiddlewareStack(URLRouter(web_socket.events.routing.websocket_urlpatterns))
+        UUIDAuthMiddleware(URLRouter(web_socket.events.routing.websocket_urlpatterns))
     ),
 })

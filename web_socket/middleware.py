@@ -1,30 +1,30 @@
-from channels.auth import AuthMiddlewareStack
-from rest_framework.authtoken.models import Token
+from channels.auth import BaseMiddleware
+from channels.db import database_sync_to_async
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 
 
-class UUIDAuthMiddleware:
+@database_sync_to_async
+def get_user(scope):
+    headers = dict(scope['headers'])
+    if b'auth-uuid' in headers:
+        try:
+            uuid = headers[b'auth-uuid'].decode('utf-8')
+            if uuid:
+                user = get_user_model().objects.get(uuid=str(uuid))
+                return user
+        except Exception as e:
+            return AnonymousUser()
+    else:
+        return AnonymousUser()
+
+
+class UUIDAuthMiddleware(BaseMiddleware):
     """
     Token authorization middleware for Django Channels 2
     """
 
-    def __init__(self, inner):
-        self.inner = inner
-
-    def __call__(self, scope, a, b):
-        headers = dict(scope['headers'])
-        if b'AUTH-UUID' in headers:
-            try:
-                uuid = headers[b'AUTH-UUID']
-                if uuid:
-                    user = get_user_model().objects.get(uuid=str(uuid))
-                    scope['user'] = user
-            except Token.DoesNotExist:
-                scope['user'] = AnonymousUser()
-        else:
-            scope['user'] = AnonymousUser()
-        return self.inner(scope)
-
-
-UUIDAuthMiddlewareStack = lambda inner: UUIDAuthMiddleware(AuthMiddlewareStack(inner))
+    async def __call__(self, scope, receive, send):
+        scope['user'] = await get_user(scope)
+        return await super(UUIDAuthMiddleware, self).__call__(scope, receive, send)
