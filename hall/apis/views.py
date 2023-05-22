@@ -1,10 +1,17 @@
+import datetime
+
 from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
+from rest_framework.mixins import ListModelMixin
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.exceptions import ValidationError
 
 from guardian.shortcuts import assign_perm
 
@@ -13,7 +20,7 @@ from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
 from Apafan_dashboard.serializers import GlobalSerializer
 
 from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionSerializer, GroupSerializer, \
-    DeviceSerializer, HeadSerializer
+    DeviceSerializer, HeadSerializer, CompanyDetailSerializer
 from hall.filters import *
 from hall.permissions import IsSuperUser, CustomObjectPermission
 from hall.models import Company, Hall, Production, Squad, Device, Head
@@ -43,7 +50,7 @@ class HallViewSet(ModelViewSet):
     filter_backends = [HallListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name']
     queryset = Hall.objects.all()
-    serializer_class = GlobalSerializer
+    serializer_class = HallSerializer
 
     def create(self, request, *args, **kwargs):
         res = super(HallViewSet, self).create(request, *args, **kwargs)
@@ -113,7 +120,6 @@ class DeviceViewSet(ModelViewSet):
         parameter_set = get_objects_for_user(self.request.user, "")
 
 
-
 class HeadViewSet(ModelViewSet):
     """
     برای عملیات بر روی head ها هست
@@ -129,3 +135,22 @@ class HeadViewSet(ModelViewSet):
         assign_perm('hall.view_head', request.user, get_object_or_404(Head, id=res.data['id']))
         assign_perm('hall.change_head', request.user, get_object_or_404(Head, id=res.data['id']))
         return res
+
+
+class CompanyDetailViewSet(ListModelMixin, GenericViewSet):
+    """for get detail for company (only available for super user)"""
+    permission_classes = [IsSuperUser]
+    queryset = Company.objects.all()
+    serializer_class = CompanyDetailSerializer
+
+    @swagger_auto_schema(
+        responses={200: openapi.Response('OK', CompanyDetailSerializer)})
+    def list(self, request, *args, **kwargs):
+        try:
+            data = {
+                "all_company": len(Company.objects.all()),
+                "active_company": len(Company.objects.filter(expire_service_time__gt=datetime.datetime.now()))
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+        except Exception as e:
+            raise ValidationError(detail=e.__str__(), code=status.HTTP_500_INTERNAL_SERVER_ERROR)

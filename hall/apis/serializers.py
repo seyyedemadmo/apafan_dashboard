@@ -1,5 +1,7 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import Serializer
 from rest_framework.exceptions import ValidationError
+from rest_framework import serializers
 
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -71,3 +73,12 @@ class WebSocketHeadSerializer(ModelSerializer):
         model = Head
         exclude = ['created_at', 'updated_at', ]
         depth = 1
+
+
+class CompanyDetailSerializer(Serializer):
+    all_company = serializers.IntegerField()
+    active_company = serializers.IntegerField()
+
+    def to_internal_value(self, data):
+        print('meeee')
+        super(CompanyDetailSerializer, self).to_internal_value(data)
