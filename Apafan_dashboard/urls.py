@@ -49,6 +49,7 @@ urlpatterns = [
     path('api/versions/', include('versions.apis.urls')),
     path('api/setting/', include('setting.apis.urls')),
     path('api/user-auth/', include('rest_framework.urls')),
+    path('api/chart/', include('chart.apis.urls')),
     path('api/auth/token', rest_view.CustomObtainToken.as_view(), name='برای login , logout از سامانه'),
     path('api/auth/token/refresh', rest_view.CustomRefreshToken.as_view(), name='برای login , logout از سامانه'),
     re_path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
