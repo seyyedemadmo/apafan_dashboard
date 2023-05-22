@@ -3,8 +3,6 @@ name: Django CI
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
   build:
@@ -37,5 +35,6 @@ jobs:
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
           cd /root/app/api/
+          git stash
           git pull origin master
           # Additional deployment steps as needed
