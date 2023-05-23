@@ -105,7 +105,7 @@ class ChangePasswordSerializers(Serializer):
 class SelfUserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['first_name', 'last_name', 'email', 'username', 'last_login']
+        fields = ["uuid", 'first_name', 'last_name', 'email', 'username', 'last_login']
 
 
 class SelfUserUpdateSerializers(ModelSerializer):
