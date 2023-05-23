@@ -1,5 +1,6 @@
 from django.contrib.sessions.models import Session
 from django.utils import timezone
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
@@ -14,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView, TokenRefreshView
 
 from Apafan_dashboard.exeptions import CustomInvalidToken
-from .serializers import LoginSerializer, RefreshTokenSerializer, TokenSerializer
+from .serializers import LoginSerializer, RefreshTokenSerializer, TokenSerializer, ActiveUserCountSerializers
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -108,6 +109,8 @@ class ActiveUserCountAPIView(APIView):
     """api for view all active user count"""
     permission_classes = [IsAdminOrSuperUser]
 
+    @swagger_auto_schema(
+        responses={200: openapi.Response('OK', ActiveUserCountSerializers)})
     def get(self, request):
         all_user = len(get_user_model().objects.all())
         band_user = len(get_user_model().objects.filter(is_band=True))
