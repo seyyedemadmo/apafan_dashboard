@@ -125,6 +125,8 @@ class LoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Incorrect Credentials")
 
 
+# TODO only for create response model
+
 class TokenSerializer(serializers.Serializer):
     refresh = serializers.CharField(required=True)
     access = serializers.CharField(required=True)
@@ -132,3 +134,10 @@ class TokenSerializer(serializers.Serializer):
 
 class RefreshTokenSerializer(serializers.Serializer):
     access = serializers.CharField(required=True)
+
+
+class ActiveUserCountSerializers(serializers.Serializer):
+    active_user = serializers.IntegerField()
+    all_user = serializers.IntegerField()
+    band_user = serializers.IntegerField()
+    session_active = serializers.IntegerField()
