@@ -79,6 +79,9 @@ class CompanyDetailSerializer(Serializer):
     all_company = serializers.IntegerField()
     active_company = serializers.IntegerField()
 
-    def to_internal_value(self, data):
-        print('meeee')
-        super(CompanyDetailSerializer, self).to_internal_value(data)
+
+class DeviceDetailSerialzier(Serializer):
+    all_device = serializers.IntegerField()
+    active_device = serializers.IntegerField()
+    non_send_data = serializers.IntegerField()
+    deactivate_device = serializers.IntegerField()
