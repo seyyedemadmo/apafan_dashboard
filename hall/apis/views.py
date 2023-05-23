@@ -20,10 +20,11 @@ from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
 from Apafan_dashboard.serializers import GlobalSerializer
 
 from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionSerializer, GroupSerializer, \
-    DeviceSerializer, HeadSerializer, CompanyDetailSerializer
+    DeviceSerializer, HeadSerializer, CompanyDetailSerializer, DeviceDetailSerialzier
 from hall.filters import *
 from hall.permissions import IsSuperUser, CustomObjectPermission
 from hall.models import Company, Hall, Production, Squad, Device, Head
+from hall.utils.get_non_send_data import get_count_non_send
 
 
 class CompanyViewSet(ModelViewSet):
@@ -118,6 +119,26 @@ class DeviceViewSet(ModelViewSet):
     def get_parameter(self, request, pk):
         device = get_object_or_404(Device, id=pk)
         parameter_set = get_objects_for_user(self.request.user, "")
+
+    @swagger_auto_schema(
+        responses={200: openapi.Response('OK', DeviceDetailSerialzier)})
+    @action(methods=["GET"], detail=False)
+    def get_detail(self, request):
+        try:
+            all_device = len(self.get_queryset())
+            active_device = len(self.get_queryset().filter(is_connected=True))
+            deactivate_device = all_device - active_device
+            non_send_data = get_count_non_send(self.get_queryset())
+            data = {
+                "all_device": all_device,
+                "active_device": active_device,
+                "non_send_data": non_send_data,
+                "deactivate_device": deactivate_device
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+        except Exception as e:
+            raise ValidationError(detail='internal error: {}'.format(e.__str__()),
+                                  code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class HeadViewSet(ModelViewSet):
