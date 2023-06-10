@@ -3,7 +3,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from device.apis.serializers import TempDeviceSerializers
-from device.models import TempDevice
+from device.models import TempDevice, HeadData
 
 
 class ShowTempDeviceViewSet(ListModelMixin, GenericViewSet):

@@ -6,6 +6,7 @@ from rest_framework import serializers
 from django.contrib.gis.geos import GEOSGeometry
 
 from hall.models import Company, Hall, Production, Squad, Device, Head
+from device.models import HeadData
 
 
 class CompanySerializer(ModelSerializer):
@@ -85,3 +86,9 @@ class DeviceDetailSerialzier(Serializer):
     active_device = serializers.IntegerField()
     non_send_data = serializers.IntegerField()
     deactivate_device = serializers.IntegerField()
+
+
+class DeviceDataSerializer(ModelSerializer):
+    class Meta:
+        model = HeadData
+        fields = "__all__"
