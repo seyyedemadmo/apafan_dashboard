@@ -18,9 +18,10 @@ from guardian.shortcuts import assign_perm
 from Apafan_dashboard.authoraization import CustomAuthentication
 from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
 from Apafan_dashboard.serializers import GlobalSerializer
+from device.models import HeadData
 
 from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionSerializer, GroupSerializer, \
-    DeviceSerializer, HeadSerializer, CompanyDetailSerializer, DeviceDetailSerialzier
+    DeviceSerializer, HeadSerializer, CompanyDetailSerializer, DeviceDetailSerialzier, DeviceDataSerializer
 from hall.filters import *
 from hall.permissions import IsSuperUser, CustomObjectPermission
 from hall.models import Company, Hall, Production, Squad, Device, Head
@@ -108,6 +109,7 @@ class DeviceViewSet(ModelViewSet):
     search_fields = ['name', 'code']
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
+    lookup_field = "pk"
 
     def create(self, request, *args, **kwargs):
         res = super(DeviceViewSet, self).create(request, *args, **kwargs)
@@ -139,6 +141,16 @@ class DeviceViewSet(ModelViewSet):
         except Exception as e:
             raise ValidationError(detail='internal error: {}'.format(e.__str__()),
                                   code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        responses={200: openapi.Response('OK', DeviceDataSerializer)})
+    @action(methods=["GET"], detail=True, )
+    def get_data(self, request, pk):
+        device = self.get_object()
+        queryset = HeadData.objects.filter(device_id=device.id)
+        headdata = self.paginate_queryset(queryset)
+        serializer = DeviceDataSerializer(headdata, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class HeadViewSet(ModelViewSet):
