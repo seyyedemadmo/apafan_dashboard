@@ -66,7 +66,7 @@ class HallViewSet(ModelViewSet):
         available = get_objects_for_user(request.user,
                                          'hall.view_production') if not request.user.is_admin else hall_set
         queryset = available & hall_set
-        data = [ProductionSerializer(model).data for model in queryset]
+        data = ProductionSerializer(queryset, many=True)
         return Response(data=data, status=status.HTTP_200_OK)
 
 

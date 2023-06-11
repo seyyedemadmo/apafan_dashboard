@@ -20,7 +20,9 @@ class HeadParameterModelViewSet(ModelViewSet):
     filter_backends = [HeadParametersFilterBackend, SearchFilter]
     search_fields = ['key']
     serializer_class = HeadParameterSerializer
-    queryset = HeadParameter.objects.all()
+
+    def get_queryset(self):
+        return HeadParameter.objects.filter(head_id=self.kwargs.get("pk"))
 
 
 class DeviceParameterModelViewSet(ModelViewSet):
@@ -28,7 +30,9 @@ class DeviceParameterModelViewSet(ModelViewSet):
     filter_backends = [DeviceParameterFilterBackend, SearchFilter]
     search_fields = ['key']
     serializer_class = DeviceParameterSerializer
-    queryset = DeviceParameter.objects.all()
+
+    def get_queryset(self):
+        return DeviceParameter.objects.filter(device_id=self.kwargs.get('pk'))
 
     @action(methods=['GET'], detail=True)
     def update_device_parameter(self, request, pk):
@@ -48,7 +52,8 @@ class DeviceParameterModelViewSet(ModelViewSet):
 
             return Response(data='update parameter successful', status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(data='we have some error in update parameter: {}'.format(e.__str__()), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data='we have some error in update parameter: {}'.format(e.__str__()),
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(methods=['GET'], detail=True)
     def update_head_parameter(self, request, pk):
@@ -68,4 +73,5 @@ class DeviceParameterModelViewSet(ModelViewSet):
 
             return Response(data='update parameter successful', status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(data='we have some error in update parameter: {}'.format(e.__str__()), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data='we have some error in update parameter: {}'.format(e.__str__()),
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
