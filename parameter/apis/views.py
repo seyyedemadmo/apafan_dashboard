@@ -34,10 +34,10 @@ class DeviceParameterModelViewSet(ModelViewSet):
     def get_queryset(self):
         return DeviceParameter.objects.filter(device_id=self.kwargs.get('pk'))
 
-    @action(methods=['GET'], detail=True)
+    @action(methods=['GET'], detail=False)
     def update_device_parameter(self, request, pk):
         try:
-            device = get_object_or_404(Device, chip_ip=pk)
+            device = get_object_or_404(Device, chip_ip=self.kwargs.get('pk'))
 
             device_base_topic = getattr(settings, 'MQTT_DEVICE_PARAMETER_UPDATE_TOPIC', None)
 
@@ -50,15 +50,15 @@ class DeviceParameterModelViewSet(ModelViewSet):
                           )
             client.send(device_topic, '1')
 
-            return Response(data='update parameter successful', status=status.HTTP_200_OK)
+            return Response(data={"detail": 'update parameter successful'}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(data='we have some error in update parameter: {}'.format(e.__str__()),
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data={"detail": 'we have some error in update parameter: {}'.format(e.__str__())},
+                   status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(methods=['GET'], detail=True)
+    @action(methods=['GET'], detail=False)
     def update_head_parameter(self, request, pk):
         try:
-            device = get_object_or_404(Device, chip_ip=pk)
+            device = get_object_or_404(Device, chip_ip=self.kwargs.get('pk'))
 
             device_base_topic = getattr(settings, 'MQTT_HEAD_PARAMETER_UPDATE_TOPIC', None)
 
