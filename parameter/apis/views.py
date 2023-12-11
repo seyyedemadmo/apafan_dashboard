@@ -22,7 +22,7 @@ class HeadParameterModelViewSet(ModelViewSet):
     serializer_class = HeadParameterSerializer
 
     def get_queryset(self):
-        return HeadParameter.objects.filter(head_id=self.kwargs.get("pk"))
+        return HeadParameter.objects.filter(head_id=self.kwargs.get("device_id"))
 
 
 class DeviceParameterModelViewSet(ModelViewSet):
@@ -32,12 +32,12 @@ class DeviceParameterModelViewSet(ModelViewSet):
     serializer_class = DeviceParameterSerializer
 
     def get_queryset(self):
-        return DeviceParameter.objects.filter(device_id=self.kwargs.get('pk'))
+        return DeviceParameter.objects.filter(device_id=self.kwargs.get('device_id'))
 
     @action(methods=['GET'], detail=False)
     def update_device_parameter(self, request, pk):
         try:
-            device = get_object_or_404(Device, chip_ip=self.kwargs.get('pk'))
+            device = get_object_or_404(Device, chip_ip=self.kwargs.get('device_id'))
 
             device_base_topic = getattr(settings, 'MQTT_DEVICE_PARAMETER_UPDATE_TOPIC', None)
 
@@ -58,7 +58,7 @@ class DeviceParameterModelViewSet(ModelViewSet):
     @action(methods=['GET'], detail=False)
     def update_head_parameter(self, request, pk):
         try:
-            device = get_object_or_404(Device, chip_ip=self.kwargs.get('pk'))
+            device = get_object_or_404(Device, chip_ip=self.kwargs.get('device_id'))
 
             device_base_topic = getattr(settings, 'MQTT_HEAD_PARAMETER_UPDATE_TOPIC', None)
 
