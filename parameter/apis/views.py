@@ -35,9 +35,9 @@ class DeviceParameterModelViewSet(ModelViewSet):
         return DeviceParameter.objects.filter(device_id=self.kwargs.get('device_id'))
 
     @action(methods=['GET'], detail=False)
-    def update_device_parameter(self, request, pk):
+    def update_device_parameter(self, request, device_id):
         try:
-            device = get_object_or_404(Device, chip_ip=self.kwargs.get('device_id'))
+            device = get_object_or_404(Device, id=self.kwargs.get('device_id'))
 
             device_base_topic = getattr(settings, 'MQTT_DEVICE_PARAMETER_UPDATE_TOPIC', None)
 
@@ -56,9 +56,9 @@ class DeviceParameterModelViewSet(ModelViewSet):
                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(methods=['GET'], detail=False)
-    def update_head_parameter(self, request, pk):
+    def update_head_parameter(self, request, device_id):
         try:
-            device = get_object_or_404(Device, chip_ip=self.kwargs.get('device_id'))
+            device = get_object_or_404(Device, id=self.kwargs.get('device_id'))
 
             device_base_topic = getattr(settings, 'MQTT_HEAD_PARAMETER_UPDATE_TOPIC', None)
 
