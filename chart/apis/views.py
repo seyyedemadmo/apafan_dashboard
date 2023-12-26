@@ -21,7 +21,7 @@ class ChartFieldAPIView(ViewSet):
             last_data_send = device.headdata_set.latest("receive_at").data
         except Exception as e:
             raise NotFound("this device dont send any data yet", code=status.HTTP_400_BAD_REQUEST)
-        ans = [field for field in last_data_send.keys() if type(last_data_send[field]) != str]
+        ans = [field for field in last_data_send.keys()]
         data = {
             "chip_ip": device.chip_ip,
             'fields': ans
