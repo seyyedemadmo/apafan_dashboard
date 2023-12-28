@@ -15,7 +15,7 @@ def get_user(scope):
                 user = get_user_model().objects.get(uuid=str(uuid))
                 return user
         except Exception as e:
-            return AnonymousUser()
+                return AnonymousUser()
     else:
         return AnonymousUser()
 
