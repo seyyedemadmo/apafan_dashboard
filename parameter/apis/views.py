@@ -5,73 +5,67 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+import json
+from parameter.helpers.sender import send_parameter
 
 from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
 from hall.models import Device
 from mqtt.helpers.tasks import Mqtt
 
-from parameter.apis.serializers import HeadParameterSerializer, DeviceParameterSerializer
+from parameter.apis.serializers import ParameterSerializer, ParameterTypeSerializer
 from parameter.filters import HeadParametersFilterBackend, DeviceParameterFilterBackend
-from parameter.models import HeadParameter, DeviceParameter
+from parameter.models import Parameter, ParameterType
+from hall.apis.serializers import DeviceSerializer
 
 
-class HeadParameterModelViewSet(ModelViewSet):
+class ParameterModelViewSet(ModelViewSet):
+    queryset = Parameter.objects.all()
+    serializer_class = ParameterSerializer
     permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [HeadParametersFilterBackend, SearchFilter]
-    search_fields = ['key']
-    serializer_class = HeadParameterSerializer
+    # search_fields = ['key']
+    # filter_backends = [HeadParametersFilterBackend, SearchFilter]
 
-    def get_queryset(self):
-        return HeadParameter.objects.filter(head_id=self.kwargs.get("device_id"))
-
-
-class DeviceParameterModelViewSet(ModelViewSet):
-    permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [DeviceParameterFilterBackend, SearchFilter]
-    search_fields = ['key']
-    serializer_class = DeviceParameterSerializer
-
-    def get_queryset(self):
-        return DeviceParameter.objects.filter(device_id=self.kwargs.get('device_id'))
-
-    @action(methods=['GET'], detail=False)
-    def update_device_parameter(self, request, device_id):
+    @action(methods=['POST'], detail=False, url_path="create")
+    def create_device_parameter(self, request, *args, **kwargs):
         try:
-            device = get_object_or_404(Device, id=self.kwargs.get('device_id'))
-
+            device = get_object_or_404(Device, id=request.data['device_id'])
             device_base_topic = getattr(settings, 'MQTT_DEVICE_PARAMETER_UPDATE_TOPIC', None)
-
             device_topic = "/".join([device_base_topic, device.chip_ip])
 
-            client = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
-                          getattr(settings, "MQTT_PORT", None),
-                          username=getattr(settings, "MQTT_USER", None),
-                          password=getattr(settings, "MQTT_PASSWORD", None)
-                          )
-            client.send(device_topic, '1')
-
-            return Response(data={"detail": 'update parameter successful'}, status=status.HTTP_200_OK)
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                print("yes")
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(data={"detail": 'we have some error in update parameter: {}'.format(e.__str__())},
-                   status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(methods=['GET'], detail=False)
-    def update_head_parameter(self, request, device_id):
+    @action(methods=['PUT'], detail=False, url_path="(?P<device_id>[^/.])/update")
+    def update_device_parameter(self, request, *args, **kwargs):
         try:
-            device = get_object_or_404(Device, id=self.kwargs.get('device_id'))
-
-            device_base_topic = getattr(settings, 'MQTT_HEAD_PARAMETER_UPDATE_TOPIC', None)
-
+            device = get_object_or_404(Device, id=kwargs.get("device_id"))
+            device_base_topic = getattr(settings, 'MQTT_DEVICE_PARAMETER_UPDATE_TOPIC', None)
             device_topic = "/".join([device_base_topic, device.chip_ip])
 
-            client = Mqtt(getattr(settings, "MQTT_ADDRESS", None),
-                          getattr(settings, "MQTT_PORT", None),
-                          username=getattr(settings, "MQTT_USER", None),
-                          password=getattr(settings, "MQTT_PASSWORD", None)
-                          )
-            client.send(device_topic, '1')
-
-            return Response(data='update parameter successful', status=status.HTTP_200_OK)
+            parameter = Parameter.objects.get(device_id=kwargs.get("device_id"))
+            serializer = self.get_serializer(instance=parameter, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                send_parameter(device_topic, request.data)
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(data='we have some error in update parameter: {}'.format(e.__str__()),
+            return Response(data={"detail": 'we have some error in update parameter: {}'.format(e.__str__())},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ParameterTypeModelViewSet(ModelViewSet):
+    queryset = ParameterType.objects.all()
+    serializer_class = ParameterTypeSerializer
+    permission_classes = [CustomDjangoObjectPermissions]

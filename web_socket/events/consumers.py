@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from hall.models import Head
 from hall.apis.serializers import WebSocketHeadSerializer
 
 
@@ -34,14 +33,16 @@ class HeadConsumers(WebsocketConsumer):
 
 
 def get_head(pk: int):
-    try:
-        return get_object_or_404(Head, id=pk)
-    except Http404 as e:
-        return None
+    pass
+    # try:
+    #     return get_object_or_404(Head, id=pk)
+    # except Http404 as e:
+    #     return None
 
 
-def get_last_data(head: Head):
-    try:
-        return head.headdata_set.order_by("receive_at").last().receive_at
-    except:
-        return None
+def get_last_data():
+    pass
+    # try:
+    #     return head.headdata_set.order_by("receive_at").last().receive_at
+    # except:
+    #     return None

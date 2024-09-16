@@ -1,26 +1,18 @@
 from rest_framework.exceptions import ValidationError
-
 import json
-
 from mqtt.helpers.tasks import Mqtt
-
 from django.conf import settings
 
 
 def send_parameter(topic: str, data: dict):
     try:
-        mqtt_client = Mqtt(getattr(settings, "MQTT_ADDRESS", None), getattr(settings, "MQTT_PORT", None))
+        mqtt_client = Mqtt(getattr(settings, "MQTT_ADDRESS", None), getattr(settings, "MQTT_PORT", None),
+                           getattr(settings, "MQTT_USER"), getattr(settings, "MQTT_PASSWORD"))
+        mqtt_client.run()
     except Exception as e:
         raise ValidationError("cant connect to mqtt broker")
 
-    send_data = {
-        "key": data['key'],
-        "address": data['address'] if "address" in data.keys() else data["main_add"],
-        "value": data['value'],
-        "is_head": False if 'device' in data.keys() else False,
-        "head_code": data['sub_add'] if "sub_add" in data.keys() else None
-    }
-    str_data = json.dumps(send_data)
+    str_data = json.dumps(data)
 
     try:
         mqtt_client.send(topic, str_data)

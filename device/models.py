@@ -1,6 +1,6 @@
 from django.db import models
 
-from hall.models import Head, Device
+from hall.models import Device
 
 
 class HeadData(models.Model):

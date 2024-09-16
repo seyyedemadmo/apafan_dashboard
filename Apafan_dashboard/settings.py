@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 import dotenv
+
+
 
 dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -55,7 +58,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'guardian',
     'corsheaders',
-
+    'django.contrib.gis',
 ]
 
 MIDDLEWARE = [
@@ -223,9 +226,9 @@ BASE_MQTT_PUBLISH_TOPIC = os.getenv('BASE_MQTT_PUBLISH_TOPIC')
 
 BASE_LOG_TOPIC = os.getenv('BASE_LOG_TOPIC')
 
-MQTT_ADDRESS = os.getenv('MQTT_ADDRESS')
+MQTT_ADDRESS = str(os.getenv('MQTT_ADDRESS'))
 
-MQTT_PORT = int(os.getenv('MQTT_PORT'))
+MQTT_PORT = os.getenv('MQTT_PORT')
 
 MQTT_USER = os.getenv('MQTT_USER')
 
@@ -248,3 +251,12 @@ MQTT_DEVICE_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_DEVICE_PARAMETER_UPDATE_TOP
 MQTT_HEAD_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_HEAD_PARAMETER_UPDATE_TOPIC')
 
 MQTT_TEMP_DEVICE_TOPIC = os.getenv('MQTT_TEMP_DEVICE_TOPIC')
+
+
+GDAL_LIBRARY_PATH = r"D:\Work\Atibin\Server\apafan_dashboard\venv\Lib\site-packages\osgeo\gdal304.dll"
+GEOS_LIBRARY_PATH = r"D:\Work\Atibin\Server\apafan_dashboard\venv\Lib\site-packages\osgeo\geos_c.dll"
+# GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH', r'C:\OSGeo4W\bin\gdal309.dll')
+
+
+
+

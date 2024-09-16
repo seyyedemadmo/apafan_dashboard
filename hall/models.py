@@ -10,23 +10,8 @@ class Company(g_models.Model):
     expire_service_time = models.DateTimeField(null=True, blank=True)
     address = models.CharField(null=True, blank=True, max_length=1000)
 
-
-class Hall(g_models.Model):
-    name = models.CharField(null=False, blank=False, max_length=500, help_text='نام سالن')
-    capacity = models.IntegerField(null=True, blank=True, help_text='ظرفیت سالن')
-    geom = g_models.PolygonField(blank=False, null=False, srid=4326, help_text='موقعیت مکانی')
-    created_at = models.DateTimeField(auto_now_add=True, help_text='تاریخ ساخت')
-    updated_at = models.DateTimeField(auto_now=True, help_text='تاریخ آپدیت')
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-
-
-class Production(g_models.Model):
-    name = models.CharField(null=False, blank=False, max_length=255)
-    capacity = models.IntegerField(null=True, blank=True)
-    geom = g_models.PolygonField(srid=4326, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True, help_text='تاریخ ساخت')
-    updated_at = models.DateTimeField(auto_now=True, help_text='تاریخ آپدیت')
-    hall = models.ForeignKey(Hall, on_delete=models.CASCADE, null=False, blank=False)
+    def __str__(self):
+        return self.name
 
 
 class Squad(g_models.Model):
@@ -35,14 +20,21 @@ class Squad(g_models.Model):
     geom = g_models.PolygonField(blank=False, null=False, srid=4326)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    production = models.ForeignKey(Production, on_delete=models.CASCADE, null=False, blank=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+
+class DeviceType(g_models.Model):
+    name = models.CharField(null=False, blank=False, max_length=225)
+    company = models.ManyToManyField(Company)
+
+    def __str__(self):
+        return self.name
 
 
 class Device(g_models.Model):
-    class Device_type(models.TextChoices):
-        ONE_MOTOR = 'one'
-        TWO_MOTOR = 'two'
-
     name = models.CharField(null=False, blank=False, max_length=255)
     code = models.CharField(null=False, blank=False, max_length=255)
     chip_ip = models.CharField(null=False, blank=False, unique=True, max_length=255)
@@ -52,17 +44,18 @@ class Device(g_models.Model):
     group = models.ForeignKey(Squad, on_delete=models.SET_NULL, null=True, blank=True)
     is_connected = models.BooleanField(default=False)
     last_connected = models.DateTimeField(null=True, blank=True)
-    device_type = models.CharField(choices=Device_type.choices, default=Device_type.ONE_MOTOR, max_length=255, )
+    device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, null=False, blank=False)
+    status = models.BinaryField(blank=True, null=True)
+    command = models.BinaryField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if (self.status and len(self.status) > 4) or (self.command and len(self.command) > 4):
+            raise ValueError("The binary fields cannot be longer than 32 bits (4 bytes).")
+        super().save(*args, **kwargs)
 
 
-class Head(g_models.Model):
-    name = models.CharField(null=False, blank=False, max_length=255)
-    head_code = models.IntegerField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_connected = models.BooleanField(default=False)
-    last_connected = models.DateTimeField(null=True, blank=True)
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
 
-    class Meta:
-        unique_together = ['head_code', 'device']
+

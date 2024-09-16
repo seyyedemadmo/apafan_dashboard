@@ -17,6 +17,7 @@ class ProductionListObjectPermissionFilterBackend(BaseFilterBackend):
         if request.user.is_superuser:
             return queryset
         if request.user.is_admin:
+
             return queryset.filter(hall__company_id=request.user.company.id)
         return get_objects_for_user(request.user,
                                     f"{queryset.model._meta.app_label}.view_{queryset.model._meta.model_name}")

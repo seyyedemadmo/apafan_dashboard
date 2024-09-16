@@ -7,11 +7,12 @@ from paho.mqtt.client import Client
 from django.conf import settings
 
 from device.models import HeadData
-from hall.models import Head, Company, Device
+from hall.models import Company, Device
 
 
 def default_on_connect(client, userdata, flags, rc, prob=None):
-    print("device connected")
+    # print("device connected")
+    pass
 
 
 def default_on_massage(client, userdata, msg):
@@ -43,14 +44,15 @@ def default_on_massage(client, userdata, msg):
 
 
 def default_on_disconnect(rc, a, b, c):
-    print("disconnect")
+    pass
+    # print("disconnect")
 
 
 class Mqtt:
     def __init__(self, address, port, username=None, password=None, protocol=5, on_connect=None, on_massage=None,
                  on_disconnect=None, client_id=None):
         self.address = address
-        self.port = port
+        self.port = int(port)
         self.username = username
         self.password = password
         self.connect_function = on_connect if on_connect else default_on_connect
@@ -62,13 +64,14 @@ class Mqtt:
         self.connect()
 
     def connect(self, version=5):
-        rc = self.client.connect(self.address, self.port)
+        rc = self.client.connect(self.address, self.port, keepalive=60)
         if rc == 0:
             return True
         return False
 
     def send(self, topic, massage):
-        return self.client.publish(topic, massage, qos=2)
+        print(type(massage))
+        return self.client.publish(topic, massage)
 
     def listen(self, topic):
         return self.client.subscribe(topic)

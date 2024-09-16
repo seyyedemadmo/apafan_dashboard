@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from django.contrib.gis.geos import GEOSGeometry
 
-from hall.models import Company, Hall, Production, Squad, Device, Head
+from hall.models import Company, Squad, Device, DeviceType
 from device.models import HeadData
 
 
@@ -15,46 +15,16 @@ class CompanySerializer(ModelSerializer):
         fields = '__all__'
 
 
-class HallSerializer(ModelSerializer):
-    class Meta:
-        model = Hall
-        fields = '__all__'
-
-    def validate(self, attrs):
-        geom = GEOSGeometry(attrs['geom'], srid=4326)
-        if not attrs['company'].location.contains(geom):
-            raise ValidationError('موقعیت مکانی سالن نباید بیرون از محدوده کارخانه باشد')
-        return attrs
-
-
-class ProductionSerializer(ModelSerializer):
-    class Meta:
-        model = Production
-        fields = '__all__'
-
-    def validate(self, attrs):
-        geom = GEOSGeometry(attrs['geom'], srid=4326)
-        if not attrs['hall'].geom.contains(geom):
-            raise ValidationError('موقعیت مکانی خط تولید نباید بیرون از محدوده سالن مورد نظر باشد')
-        return attrs
-
-
 class GroupSerializer(ModelSerializer):
     class Meta:
         model = Squad
         fields = '__all__'
 
-    def validate(self, attrs):
-        geom = GEOSGeometry(attrs['geom'], srid=4326)
-        if not attrs['production'].geom.contains(geom):
-            raise ValidationError('موقعیت مکانی گروه دستگاه ها نباید بیرون از محدوده خط تولید مورد نظر باشد')
-        return attrs
-
 
 class DeviceSerializer(ModelSerializer):
     class Meta:
         model = Device
-        exclude = ['created_at', 'updated_at', 'is_connected', 'last_connected']
+        exclude = ['created_at', 'updated_at', 'is_connected', 'last_connected', 'status', 'command']
 
     def validate(self, attrs):
         geom = GEOSGeometry(attrs['geom'], srid=4326)
@@ -63,15 +33,9 @@ class DeviceSerializer(ModelSerializer):
         return attrs
 
 
-class HeadSerializer(ModelSerializer):
-    class Meta:
-        model = Head
-        exclude = ['created_at', 'updated_at', 'is_connected', 'last_connected']
-
-
 class WebSocketHeadSerializer(ModelSerializer):
     class Meta:
-        model = Head
+        model = Device
         exclude = ['created_at', 'updated_at', ]
         depth = 1
 
@@ -91,4 +55,10 @@ class DeviceDetailSerialzier(Serializer):
 class DeviceDataSerializer(ModelSerializer):
     class Meta:
         model = HeadData
+        fields = "__all__"
+
+
+class DeviceTypeSerializer(ModelSerializer):
+    class Meta:
+        model = DeviceType
         fields = "__all__"

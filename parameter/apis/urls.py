@@ -1,11 +1,11 @@
 from django.urls import path
 from rest_framework import routers
 
-from parameter.apis.views import HeadParameterModelViewSet, DeviceParameterModelViewSet
+from parameter.apis.views import ParameterModelViewSet, ParameterTypeModelViewSet
 
 router = routers.DefaultRouter()
-router.register(r"head", HeadParameterModelViewSet, basename="head_parameter")
-router.register(r"device", DeviceParameterModelViewSet, basename="device_parameter")
+router.register(r"param", ParameterModelViewSet, basename="parameter")
+router.register(r"param-type", ParameterTypeModelViewSet, basename="parameter type")
 
 urlpatterns = [
 

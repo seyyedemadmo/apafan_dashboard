@@ -20,12 +20,16 @@ from Apafan_dashboard.permissions import CustomDjangoObjectPermissions
 from Apafan_dashboard.serializers import GlobalSerializer
 from device.models import HeadData
 
-from hall.apis.serializers import CompanySerializer, HallSerializer, ProductionSerializer, GroupSerializer, \
-    DeviceSerializer, HeadSerializer, CompanyDetailSerializer, DeviceDetailSerialzier, DeviceDataSerializer
+from hall.apis.serializers import CompanySerializer, GroupSerializer, \
+    DeviceSerializer, CompanyDetailSerializer, DeviceDetailSerialzier, DeviceDataSerializer, \
+    DeviceTypeSerializer
 from hall.filters import *
 from hall.permissions import IsSuperUser, CustomObjectPermission
-from hall.models import Company, Hall, Production, Squad, Device, Head
+from hall.models import Company, Squad, Device, DeviceType
 from hall.utils.get_non_send_data import get_count_non_send
+
+from parameter.apis.serializers import ParameterSerializer
+from parameter.models import Parameter
 
 
 class CompanyViewSet(ModelViewSet):
@@ -41,48 +45,8 @@ class CompanyViewSet(ModelViewSet):
                                          'hall.view_hall') if not request.user.is_admin else hall_set.filter(
             company_id=request.user.company.id)
         queryset = available & hall_set
-        data = [HallSerializer(model).data for model in queryset]
-        return Response(data=data, status=status.HTTP_200_OK)
-
-
-class HallViewSet(ModelViewSet):
-    """برای ساخت سالن های کارحانه ها این تنها برای کسانی که دسترسی ان را دارند فعال هست"""
-    authentication_classes = [CustomAuthentication]
-    permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [HallListObjectPermissionFilterBackend, SearchFilter]
-    search_fields = ['name']
-    queryset = Hall.objects.all()
-    serializer_class = HallSerializer
-
-    def create(self, request, *args, **kwargs):
-        res = super(HallViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_hall', request.user, get_object_or_404(Hall, id=res.data['id']))
-        assign_perm('hall.change_hall', request.user, get_object_or_404(Hall, id=res.data['id']))
-        return res
-
-    @action(methods=["GET"], detail=True)
-    def list_product(self, request, pk):
-        hall_set = get_object_or_404(Hall, id=pk).production_set.all()
-        available = get_objects_for_user(request.user,
-                                         'hall.view_production') if not request.user.is_admin else hall_set
-        queryset = available & hall_set
-        data = ProductionSerializer(queryset, many=True)
-        return Response(data=data, status=status.HTTP_200_OK)
-
-
-class ProductionView(ModelViewSet):
-    """برای ساخت و نمایش داده های خط تولید مورد استفاده قرار مگیرد این مجموعه نیز دارای دسترسی هستند"""
-    permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [ProductionListObjectPermissionFilterBackend, SearchFilter]
-    search_fields = ['name']
-    queryset = Production.objects.all()
-    serializer_class = ProductionSerializer
-
-    def create(self, request, *args, **kwargs):
-        res = super(ProductionView, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_production', request.user, get_object_or_404(Production, id=res.data['id']))
-        assign_perm('hall.change_production', request.user, get_object_or_404(Production, id=res.data['id']))
-        return res
+        # data = [HallSerializer(model).data for model in queryset]
+        # return Response(data=data, status=status.HTTP_200_OK)
 
 
 class GroupViewSet(ModelViewSet):
@@ -102,25 +66,38 @@ class GroupViewSet(ModelViewSet):
 
 class DeviceViewSet(ModelViewSet):
     """
-    برای اسجاد دستگاه این مجموعه برای ورژن اول مورد نیاز هست و دارای دسترسی هست (در فاز اول تنها نیازی به پیاده سازی دسترسی ان نیست)
+    برای ایجاد دستگاه این مجموعه برای ورژن اول مورد نیاز هست و دارای دسترسی هست (در فاز اول تنها نیازی به پیاده سازی دسترسی ان نیست)
     """
     permission_classes = [CustomDjangoObjectPermissions]
     filter_backends = [DeviceListObjectPermissionFilterBackend, SearchFilter]
     search_fields = ['name', 'code']
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
-    lookup_field = "pk"
 
-    def create(self, request, *args, **kwargs):
-        res = super(DeviceViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_device', request.user, get_object_or_404(Device, id=res.data['id']))
-        assign_perm('hall.change_device', request.user, get_object_or_404(Device, id=res.data['id']))
-        return res
+    @action(detail=False, methods=["GET"], url_path="(?P<device_id>[^/.])/all_parameters")
+    def get_all_parameters(self, request, *args, **kwargs):
+        try:
+            parameters = Parameter.objects.filter(device_id=self.kwargs.get('device_id'))
+            serializer = ParameterSerializer(instance=parameters, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(data='we have some error in update parameter: {}'.format(e.__str__()),
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(methods=['GET'], detail=True)
-    def get_parameter(self, request, pk):
-        device = get_object_or_404(Device, id=pk)
-        parameter_set = get_objects_for_user(self.request.user, "")
+    @action(detail=False, methods=["PUT"], url_path="update_parameter/(?P<param_id>[^/.])")
+    def update_parameter(self, request, *args, **kwargs):
+        try:
+            parameter = get_object_or_404(Parameter, id=self.kwargs.get('param_id'))
+            serializer = ParameterSerializer(instance=parameter, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(data='we have some error in update parameter: {}'.format(e.__str__()),
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     @swagger_auto_schema(
         responses={200: openapi.Response('OK', DeviceDetailSerialzier)})
@@ -153,21 +130,10 @@ class DeviceViewSet(ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class HeadViewSet(ModelViewSet):
-    """
-    برای عملیات بر روی head ها هست
-    """
-    permission_classes = [CustomDjangoObjectPermissions]
-    filter_backends = [HeadListObjectPermissionFilterBackend, SearchFilter]
-    search_fields = ['name', 'chip_id']
-    queryset = Head.objects.all()
-    serializer_class = HeadSerializer
-
-    def create(self, request, *args, **kwargs):
-        res = super(HeadViewSet, self).create(request, *args, **kwargs)
-        assign_perm('hall.view_head', request.user, get_object_or_404(Head, id=res.data['id']))
-        assign_perm('hall.change_head', request.user, get_object_or_404(Head, id=res.data['id']))
-        return res
+class DeviceTypeViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser]
+    queryset = DeviceType.objects.all()
+    serializer_class = DeviceTypeSerializer
 
 
 class CompanyDetailViewSet(ListModelMixin, GenericViewSet):
