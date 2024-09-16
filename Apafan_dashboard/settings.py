@@ -253,9 +253,8 @@ MQTT_HEAD_PARAMETER_UPDATE_TOPIC = os.getenv('MQTT_HEAD_PARAMETER_UPDATE_TOPIC')
 MQTT_TEMP_DEVICE_TOPIC = os.getenv('MQTT_TEMP_DEVICE_TOPIC')
 
 
-GDAL_LIBRARY_PATH = r"D:\Work\Atibin\Server\apafan_dashboard\venv\Lib\site-packages\osgeo\gdal304.dll"
-GEOS_LIBRARY_PATH = r"D:\Work\Atibin\Server\apafan_dashboard\venv\Lib\site-packages\osgeo\geos_c.dll"
-# GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH', r'C:\OSGeo4W\bin\gdal309.dll')
+GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
+GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
 
 
 
